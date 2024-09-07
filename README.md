@@ -16,8 +16,40 @@ Harjoitustyössä toteutan Flaskilla yksinkertaisen Ostoskeskus-nimisen verkkoka
 
 ## Ajaminen
 
-Valmistelen Docker-tiedoston, jonka avulla arvioijat voivat ajaa Ostoskeskusta lokaalisti.
+### Docker
+
+xxx
+
+### Manuaalisesti
+
+Kun projekti on kopioitu haluttuun paikkaan, siirrytään koodin sisältävään hakemistoon ja ajetaan komento:
+
+```
+poetry install
+```
+
+Ellei Poetryä ole asennettuna jo, asennusohjeet löytyvät [täältä](https://python-poetry.org/docs/#installing-with-the-official-installer).
+
+```
+poetry shell
+```
+
+Tietokannan alustaminen:
+
+```
+xxx
+```
+
+Ohjelman ajaminen:
+
+```
+inv start
+```
 
 ## Testaaminen
 
-Valmistelen skriptin, joka luo tietokantaan kaksi käyttäjää (Tiku ja Taku) sekä molemmille omat kaupat esimerkkituotteineen.
+xxx
+
+## Tiedossa olevat ongelmat / rajoitukset
+
+- xxx
