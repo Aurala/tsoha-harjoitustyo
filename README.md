@@ -16,11 +16,9 @@ Harjoitustyössä toteutan Flaskilla yksinkertaisen Ostoskeskus-nimisen verkkoka
 
 ## Ajaminen
 
-### Docker
+Ohjelma on kehitetty macOS-ympäristössä (Apple Silicon) ja testattu yliopiston Cubbli Linux -koneissa. Ohjelman toimivuudesta muissa ympäristöissä ei ole tietoa, mutta sitä voi aina yrittää [Docker-ohjeilla](#dockerilla).
 
-xxx
-
-### Manuaalisesti
+### Askel askeleelta
 
 Kun projekti on kopioitu haluttuun paikkaan, siirrytään koodin sisältävään hakemistoon ja ajetaan komento:
 
@@ -37,8 +35,12 @@ poetry shell
 Tietokannan alustaminen:
 
 ```
-xxx
+inv initdb
 ```
+
+Alustettaessa tietokantaan luodaan käyttäjä 'admin@kauppakeskus.local' (salasana: 'supersecret').
+
+Testaamista helpottamaan voidaan tietokantaan luoda testisisältöä. Tästä lisää [täällä](documentation/testaaminen.md).
 
 Ohjelman ajaminen:
 
@@ -46,10 +48,16 @@ Ohjelman ajaminen:
 inv start
 ```
 
+Tämän jälkeen siirry selaimella web-osoitteeseen http://127.0.0.1:8080/.
+
+### Dockerilla
+
+_Tähän tulee ohjeet sovelluksen ajamiseksi Dockerilla._
+
 ## Testaaminen
 
-xxx
+Lue lisää [testaamisesta](documentation/testaaminen.md).
 
 ## Tiedossa olevat ongelmat / rajoitukset
 
-- xxx
+- _Kesken_
