@@ -10,7 +10,7 @@ CREATE TABLE Users (
     firstname TEXT,
     lastname TEXT,
     password TEXT,
-    email TEXT,
+    email TEXT UNIQUE NOT NULL,
     streetaddress TEXT,
     postalcode TEXT,
     city TEXT,
