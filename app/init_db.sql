@@ -55,4 +55,4 @@ CREATE TABLE OrderedProducts (
     product_id INTEGER REFERENCES Products(product_id),
     price REAL);
 
-INSERT INTO Users (firstname, lastname, password, email, is_admin, is_seller) VALUES ('Admin', 'User', 'supersecret', 'admin@kauppakeskus.local', 1, 0);
+INSERT INTO Users (firstname, lastname, password, email, is_admin, is_seller) VALUES ('Admin', 'User', '{{supersecret}}', 'admin@kauppakeskus.local', 1, 0);

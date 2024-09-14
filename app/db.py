@@ -1,7 +1,9 @@
 import sqlite3
+import re
 
 import click
 from flask import current_app, g
+from werkzeug.security import generate_password_hash
 
 
 def get_db():
@@ -26,7 +28,10 @@ def init_db():
     db = get_db()
 
     with current_app.open_resource(current_app.config["DATABASE_INIT_SCRIPT"]) as f:
-        db.executescript(f.read().decode("utf8"))
+        sql_script = f.read().decode("utf8")
+        for password in re.findall(r"{{(.*?)}}", sql_script):
+            sql_script = sql_script.replace(f"{{{{{password}}}}}", generate_password_hash(password))
+        db.executescript(sql_script)
 
 
 def populate_db():
