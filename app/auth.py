@@ -51,6 +51,7 @@ def register():
             except db.IntegrityError:
                 error = f"Sähköpostiosoite {email} on jo rekisteröity."
             else:
+                flash("Tilin luonti onnistui.") 
                 return redirect(url_for("auth.login"))
 
         flash(error)
@@ -82,6 +83,7 @@ def login():
         if error is None:
             session.clear()
             session["user_id"] = user["user_id"]
+            flash("Kirjautuminen onnistui.")
             return redirect(url_for("index"))
 
         flash(error)
@@ -92,6 +94,7 @@ def login():
 @bp.route("/logout")
 def logout():
     session.clear()
+    flash('Sinut on kirjattu ulos.')
     return redirect(url_for("index"))
 
 
