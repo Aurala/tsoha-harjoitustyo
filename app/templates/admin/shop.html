@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Hallinnoi kauppaasi{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  <form method="post">
+    <label for="name">Nimi</label>
+    <input name="name" id="name" required value="{{ shop['name'] }}">
+    <label for="desciption">Kuvaus</label>
+    <input name="description" id="description" required value="{{ shop['description'] }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    <input type="submit" value="Muuta tietoja">
+  </form>
+{% endblock %}

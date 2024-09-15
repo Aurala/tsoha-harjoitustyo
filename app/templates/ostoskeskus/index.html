@@ -1,24 +1,40 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}Tervetuloa Ostoskeskukseen!{% endblock %}</h1>
+  <h1>{% block title %}Tervetuloa!{% endblock %}</h1>
   {% if g.user %}
-    
   {% endif %}
 {% endblock %}
 
 {% block content %}
-  {% for shop in shops %}
-    <article class="shop">
-      <header>
-        <div>
-          <h1>{{ shop['name'] }}</h1>
-          <div class="desciption">{{ shop['description'] }}</div>
-        </div>
-      </header>
-    </article>
-    {% if not loop.last %}
-      <hr>
-    {% endif %}
-  {% endfor %}
+<div class="row">
+  <div class="column">
+    <h2>Uusimmat kaupat</h2>
+    {% for shop in shops %}
+      <article class="shop">
+          <div>
+            <h1>{{ shop['name'] }}</h1>
+            <div class="description">{{ shop['description'] }}</div>
+          </div>
+      </article>
+      {% if not loop.last %}
+        <hr>
+      {% endif %}
+    {% endfor %}
+  </div>
+  <div class="column">
+    <h2>Viimeisimmät tuotteet</h2>
+    {% for product in products %}
+      <article class="product">
+          <div>
+            <h1>{{ shop['name'] }}</h1>
+            <div class="description">{{ product['description'] }}</div>
+          </div>
+      </article>
+      {% if not loop.last %}
+        <hr>
+      {% endif %}
+    {% endfor %}  
+  </div>
+</div>
 {% endblock %}

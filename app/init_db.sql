@@ -1,6 +1,5 @@
 DROP TABLE IF EXISTS Users;
 DROP TABLE IF EXISTS Shops;
-DROP TABLE IF EXISTS Categories;
 DROP TABLE IF EXISTS Products;
 DROP TABLE IF EXISTS Orders;
 DROP TABLE IF EXISTS OrderedProducts;
@@ -25,17 +24,10 @@ CREATE TABLE Shops (
     is_available INTEGER DEFAULT FALSE NOT NULL
 );
 
-CREATE TABLE Categories (
-    category_id INTEGER PRIMARY KEY,
-    user_id INTEGER REFERENCES Shops(shop_id),
-    name TEXT,
-    description TEXT
-);
-
 CREATE TABLE Products (
     product_id INTEGER PRIMARY KEY,
     user_id INTEGER REFERENCES Users(user_id),
-    category_id INTEGER REFERENCES Categories(category_id),
+    shop_id INTEGER REFERENCES Categories(category_id),
     name TEXT,
     description TEXT,
     image BLOB,
