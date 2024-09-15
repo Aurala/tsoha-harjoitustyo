@@ -10,6 +10,17 @@ from app.db import get_db
 bp = Blueprint("auth", __name__, url_prefix="/auth")
 
 
+def login_required(view):
+    @functools.wraps(view)
+    def wrapped_view(**kwargs):
+        if g.user is None:
+            return redirect(url_for('auth.login'))
+
+        return view(**kwargs)
+
+    return wrapped_view
+
+
 @bp.route("/register", methods=("GET", "POST"))
 def register():
     if request.method == "POST":
@@ -51,7 +62,7 @@ def register():
             except db.IntegrityError:
                 error = f"Sähköpostiosoite {email} on jo rekisteröity."
             else:
-                flash("Tilin luonti onnistui.") 
+                flash("Tilin luonti onnistui.")
                 return redirect(url_for("auth.login"))
 
         flash(error)
@@ -60,6 +71,7 @@ def register():
 
 
 @bp.route("/profile", methods=("GET", "POST"))
+@login_required
 def profile():
     return render_template("auth/profile.html")
 
@@ -108,14 +120,3 @@ def load_logged_in_user():
         g.user = get_db().execute(
             "SELECT * FROM Users WHERE user_id = ?", (user_id,)
         ).fetchone()
-
-
-def login_required(view):
-    @functools.wraps(view)
-    def wrapped_view(**kwargs):
-        if g.user is None:
-            return redirect(url_for('auth.login'))
-
-        return view(**kwargs)
-
-    return wrapped_view

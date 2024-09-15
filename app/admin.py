@@ -51,3 +51,15 @@ def shop():
     ).fetchone()
 
     return render_template("admin/shop.html", shop=shop)
+
+
+@bp.route("/products", methods=("GET", "POST"))
+@login_required
+def products():
+    return render_template("admin/products.html")
+
+
+@bp.route("/sales", methods=("GET", "POST"))
+@login_required
+def sales():
+    return render_template("admin/sales.html")

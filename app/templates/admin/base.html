@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %} Hallinnoi kauppaasi {% endblock %}</h1>
+
+  <div class="tab"><a href="{{ url_for('admin.shop') }}">Kaupan tiedot</a></div>
+  <div class="tab"><a href="{{ url_for('admin.products') }}">Tuotteet</a></div>
+  <div class="tab"><a href="{{ url_for('admin.sales') }}">Myynti</a></div>
+
+  {% endblock %}
+

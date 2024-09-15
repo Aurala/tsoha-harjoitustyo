@@ -8,6 +8,7 @@
       <li><span>{{ g.user["firstname"] }}</span></li>
       <li><a class="action" href="{{ url_for('auth.profile') }}">Oma tili</a></li>
       <li><a class="action" href="{{ url_for('admin.shop') }}">Oma kauppa</a></li>
+      <li><a class="action" href="{{ url_for('cart.view') }}">Ostoskori</a></li>
       <li><a href="{{ url_for('auth.logout') }}">Kirjaudu ulos</a></li>
     {% else %}
       <li><a href="{{ url_for('auth.register') }}">Rekisteröidy</a></li>
