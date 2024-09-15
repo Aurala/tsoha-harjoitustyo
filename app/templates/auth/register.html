@@ -14,6 +14,7 @@
     <input name="lastname" id="lastname" required>
     <label for="password">Salasana</label>
     <input type="password" name="password" id="password" required>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
     <input type="submit" value="Rekisteröidy">
   </form>
 {% endblock %}

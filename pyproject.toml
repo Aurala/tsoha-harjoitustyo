@@ -12,6 +12,7 @@ gunicorn = "^23.0.0"
 flask-wtf = "^1.2.1"
 flask-login = "^0.6.3"
 python-dotenv = "^1.0.1"
+email-validator = "^2.2.0"
 
 [tool.poetry.group.dev.dependencies]
 pylint = "^3.2.7"

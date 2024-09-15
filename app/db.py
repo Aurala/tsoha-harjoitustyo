@@ -30,7 +30,8 @@ def init_db():
     with current_app.open_resource(current_app.config["DATABASE_INIT_SCRIPT"]) as f:
         sql_script = f.read().decode("utf8")
         for password in re.findall(r"{{(.*?)}}", sql_script):
-            sql_script = sql_script.replace(f"{{{{{password}}}}}", generate_password_hash(password))
+            sql_script = sql_script.replace(
+                f"{{{{{password}}}}}", generate_password_hash(password))
         db.executescript(sql_script)
 
 
