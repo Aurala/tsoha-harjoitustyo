@@ -1,3 +1,5 @@
+import functools
+
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
@@ -42,7 +44,8 @@ def register():
                 ).lastrowid
                 db.execute(
                     "INSERT INTO Shops (user_id, name, description) VALUES (?, ?, ?)",
-                    (user_id, f"Käyttäjän {email} verkkokauppa", f"Verkkokaupan kuvaus"),
+                    (user_id, f"Käyttäjän {email} verkkokauppa",
+                     f"Verkkokaupan kuvaus"),
                 )
                 db.commit()
             except db.IntegrityError:
@@ -56,7 +59,7 @@ def register():
 
 
 @bp.route("/profile", methods=("GET", "POST"))
-def edit():
+def profile():
     return render_template("auth/profile.html")
 
 
@@ -102,3 +105,14 @@ def load_logged_in_user():
         g.user = get_db().execute(
             "SELECT * FROM Users WHERE user_id = ?", (user_id,)
         ).fetchone()
+
+
+def login_required(view):
+    @functools.wraps(view)
+    def wrapped_view(**kwargs):
+        if g.user is None:
+            return redirect(url_for('auth.login'))
+
+        return view(**kwargs)
+
+    return wrapped_view
