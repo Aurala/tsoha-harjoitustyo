@@ -14,15 +14,15 @@ CREATE TABLE Users (
     streetaddress TEXT,
     postalcode TEXT,
     city TEXT,
-    is_admin INTEGER DEFAULT FALSE NOT NULL,
-    is_seller INTEGER DEFAULT FALSE NOT NULL
+    is_admin INTEGER DEFAULT FALSE NOT NULL
 );
 
 CREATE TABLE Shops (
     shop_id INTEGER PRIMARY KEY,
     user_id INTEGER REFERENCES Users(user_id),
-    name TEXT,
-    description TEXT
+    name TEXT UNIQUE NOT NULL,
+    description TEXT,
+    is_available INTEGER DEFAULT FALSE NOT NULL
 );
 
 CREATE TABLE Categories (
@@ -55,4 +55,4 @@ CREATE TABLE OrderedProducts (
     product_id INTEGER REFERENCES Products(product_id),
     price REAL);
 
-INSERT INTO Users (firstname, lastname, password, email, is_admin, is_seller) VALUES ('Admin', 'User', '{{supersecret}}', 'admin@kauppakeskus.local', 1, 0);
+INSERT INTO Users (firstname, lastname, password, email, is_admin) VALUES ('Admin', 'User', '{{supersecret}}', 'admin@kauppakeskus.local', TRUE);

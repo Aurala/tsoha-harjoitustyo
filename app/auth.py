@@ -36,9 +36,13 @@ def register():
         if error is None:
             db = get_db()
             try:
-                db.execute(
+                user_id = db.execute(
                     "INSERT INTO Users (email, firstname, lastname, password) VALUES (?, ?, ?, ?)",
                     (email, firstname, lastname, generate_password_hash(password)),
+                ).lastrowid
+                db.execute(
+                    "INSERT INTO Shops (user_id, name, description) VALUES (?, ?, ?)",
+                    (user_id, f"Käyttäjän {email} verkkokauppa", f"Verkkokaupan kuvaus"),
                 )
                 db.commit()
             except db.IntegrityError:
@@ -49,6 +53,11 @@ def register():
         flash(error)
 
     return render_template("auth/register.html")
+
+
+@bp.route("/profile", methods=("GET", "POST"))
+def edit():
+    return render_template("auth/profile.html")
 
 
 @bp.route("/login", methods=("GET", "POST"))
@@ -77,6 +86,12 @@ def login():
     return render_template("auth/login.html")
 
 
+@bp.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("index"))
+
+
 @bp.before_app_request
 def load_logged_in_user():
     user_id = session.get("user_id")
@@ -87,9 +102,3 @@ def load_logged_in_user():
         g.user = get_db().execute(
             "SELECT * FROM Users WHERE user_id = ?", (user_id,)
         ).fetchone()
-
-
-@bp.route("/logout")
-def logout():
-    session.clear()
-    return redirect(url_for("index"))
