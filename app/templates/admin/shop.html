@@ -1,7 +1,7 @@
 {% extends 'admin/base.html' %}
 
 {% block content %}
-  <form method="post">
+  <form method="post" class="admin-form">
     <label for="name">Nimi</label>
     <input name="name" id="name" required value="{{ shop['name'] }}">
     <label for="desciption">Kuvaus</label>
