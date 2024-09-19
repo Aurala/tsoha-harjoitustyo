@@ -2,6 +2,18 @@
 
 {% block content %}
 
-Coming soon: ostoskeskus/products.html
+<div class="grid">
+{% for product in products %}
+    <div class="listing">
+        <div class="image"><img src="{{ product['image'] }}"></div>
+        <div class="name">{{ product['name'] }}</div>
+        <div class="description">{{ product['description'] }}</div>
+        <div class="price">{{ product['price'] }} &#8364; (sis. ALV)</div>
+        <div class="quantity">Saatavilla: {{ product['quantity'] }} kpl</div>
+        <div class="seller">Myyjä: {{ product['shop_id'] }}</div>
+        <div class="buy"><a href="{{ url_for('cart.add', product_id=product['product_id']) }}">Osta</a></div>
+    </div>
+{% endfor %}
+</div>
 
 {% endblock %}

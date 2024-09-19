@@ -12,11 +12,9 @@
     <div class="column">
       <div class="category">Uusimmat kaupat</div>
       {% for shop in newest_shops %}
-        <article class="shop">
-            <div>
-              <div class="name">{{ shop['name'] }}</div>  
-              <div class="description">{{ shop['description'] }}</div>
-            </div>
+        <article class="top-picks">
+          <div class="name">{{ shop['name'] }}</div>  
+          <div class="description">{{ shop['description'] }}</div>
         </article>
         {% if not loop.last %}
           <hr>
@@ -26,11 +24,9 @@
     <div class="column">
       <div class="category">Uusimmat tuotteet</div>
       {% for product in newest_products %}
-        <article class="shop">
-            <div>
-              <div class="name">{{ product['name'] }}</div>  
-              <div class="description">{{ product['description'] }}</div>
-            </div>
+        <article class="top-picks">
+          <div class="name">{{ product['name'] }}</div>  
+          <div class="description">{{ product['description'] }}</div>
         </article>
         {% if not loop.last %}
           <hr>
@@ -40,11 +36,9 @@
     <div class="column">
       <div class="category">Suosituimmat kaupat</div>
       {% for shop in popular_shops %}
-        <article class="shop">
-            <div>
-              <div class="name">{{ shop['name'] }}</div>  
-              <div class="description">{{ shop['description'] }}</div>
-            </div>
+        <article class="top-picks">
+          <div class="name">{{ shop['name'] }}</div>  
+          <div class="description">{{ shop['description'] }}</div>
         </article>
         {% if not loop.last %}
           <hr>
@@ -54,11 +48,9 @@
     <div class="column">
       <div class="category">Ostetuimmat tuotteet</div>
       {% for product in popular_products %}
-        <article class="shop">
-            <div>
-              <div class="name">{{ shop['name'] }}</div>  
-              <div class="description">{{ shop['description'] }}</div>
-            </div>
+        <article class="top-picks">
+          <div class="name">{{ shop['name'] }}</div>  
+          <div class="description">{{ shop['description'] }}</div>
         </article>
         {% if not loop.last %}
           <hr>
@@ -67,7 +59,7 @@
     </div>
   </div>
 </div>
-<form action="{{ url_for('ostoskeskus.search') }}" method="post" class="search-form">
+<form action="{{ url_for('ostoskeskus.products') }}" method="post" class="search-form">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
   <input type="text" name="search" id="search" placeholder="Etsi tuotteita...">
   <input type="submit" value="Etsi">

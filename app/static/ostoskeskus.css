@@ -82,16 +82,36 @@ input.danger {
     font-size: 1.5rem;
     min-height: 4rem;
 }
-.name {
+.top-picks {
     color: #ffffff;
     text-align: center;
+}
+.name {
     font-size: 1rem;
 }
 .description {
-    color: #ffffff;
-    text-align: center;
     font-size: 0.75rem;
     font-style: italic;
+}
+.price {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 1rem;
+    text-align: center;
+}
+.quantity {
+    font-size: 1rem;
+    text-align: center;
+}
+.seller {
+    font-size: 1rem;
+    text-align: center;
+}
+.buy {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 2rem;
+    text-align: center;
 }
 .auth-form, .admin-form {
     max-width: 500px;
@@ -147,4 +167,24 @@ input.danger {
 }
 .tab > a {
     color: #000000;
+}
+.grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    width: 960px;
+    gap: 20px;
+    margin: 0 auto;
+}
+.listing {
+    border: 1px solid #cccccc;
+    padding: 10px;
+    box-sizing: border-box;
+    color: #ffffff;
+    background-color: #453cc7;
+    font-size: 30px;
+    text-align: center;
+}
+.image img {
+    width: 100%;
+    height: auto;
 }

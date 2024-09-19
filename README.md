@@ -52,7 +52,7 @@ Tämän jälkeen siirry selaimella web-osoitteeseen http://127.0.0.1:8080/.
 
 ### Dockerilla
 
-_Tähän tulee ohjeet sovelluksen ajamiseksi Dockerilla._
+_Tähän tulee ohjeet sovelluksen ajamiseksi Dockerilla (jos aikaa riittää)._
 
 ## Testaaminen
 
@@ -60,4 +60,13 @@ Lue lisää [testaamisesta](documentation/testaaminen.md).
 
 ## Tiedossa olevat ongelmat / rajoitukset
 
-- _Kesken_
+- Syöttökenttien validointi sivulla, tai vähintään edes tieto siitä mitä kenttään odotetaan
+- `inv format` (`autopep8`) ei tee kaikkia korjauksia; syy tuntematon, tutkittava
+- Etusivulla kauppojen ja tuotteiden linkit puuttuvat
+- Tuotelistaussivu on, mutta...
+    - Ei osaa filtteröidä tuotteita
+    - Ei osaa sivuttaa
+    - Näyttää myyjän id:n, ei nimeä
+    - Ostoskoritoiminnallisuus puuttuu
+
+Muista opinnoista johtuen olen hieman jäljessä toteutuksen suhteen. Täytyy kiriä! :)

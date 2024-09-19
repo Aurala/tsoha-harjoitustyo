@@ -24,11 +24,22 @@ def index():
     return render_template("ostoskeskus/index.html", newest_shops=newest_shops, newest_products=newest_products, popular_shops=popular_shops, popular_products=popular_products)
 
 
-@bp.route("/search", methods=("GET", "POST"))
-def search():
-    return redirect(url_for("ostoskeskus.products"))
-
-
-@bp.route("/products")
+@bp.route("/products", methods=("GET", "POST"))
 def products():
-    return render_template("ostoskeskus/products.html")
+    if request.method == "POST":
+        search_term = request.form["search"]
+        if search_term is None:
+            return redirect(url_for("ostoskeskus.index"))
+    
+        db = get_db()
+        products = db.execute(
+            "SELECT product_id, user_id, shop_id, name, description, image, price, quantity FROM Products" # WHERE name=? OR description=? ORDER BY product_id DESC LIMIT 10;", ("%" + search_term + "%", "%" + search_term + "%",)
+        ).fetchall()
+        return render_template("ostoskeskus/products.html", products=products)
+
+    db = get_db()
+    products = db.execute(
+        "SELECT product_id, user_id, shop_id, name, description, image, price, quantity FROM Products ORDER BY product_id DESC LIMIT 10;",
+    ).fetchall()
+    
+    return render_template("ostoskeskus/products.html", products=products)

@@ -39,15 +39,14 @@ def shop():
             except db.IntegrityError:
                 error = f"Kauppa nimeltä {name} on jo olemassa."
             else:
-                flash("Kaupan päivitys onnistui.")
+                flash("Kauppasi on nyt aktivoitu.")
                 return redirect(url_for("admin.shop"))
 
         flash(error)
 
     db = get_db()
-
     shop = db.execute(
-        "SELECT * FROM shops WHERE user_id = ?", (g.user["user_id"],)
+        "SELECT shop_id, user_id, name, description, is_available FROM shops WHERE user_id = ?", (g.user["user_id"],)
     ).fetchone()
 
     return render_template("admin/shop.html", shop=shop)
@@ -56,6 +55,15 @@ def shop():
 @bp.route("/products", methods=("GET", "POST"))
 @login_required
 def products():
+    if request.method == "POST":
+        pass
+    
+    db = get_db()
+    products = db.execute(
+        "SELECT product_id, user_id, name, description, price, quantity FROM Products WHERE user_id = ?",
+        (g.user["user_id"],)
+    ).fetchall()
+
     return render_template("admin/products.html")
 
 

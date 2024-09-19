@@ -17,3 +17,9 @@ def index():
 @login_required
 def view():
     return render_template("cart/view.html")
+
+@bp.route("/add", methods=("GET", "POST"))
+@login_required
+def add():
+    flash("Tuote lisätty ostoskoriin.")
+    return redirect(url_for("cart.view"))
