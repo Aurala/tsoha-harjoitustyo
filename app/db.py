@@ -24,22 +24,27 @@ def close_db(e=None):
         db.close()
 
 
-def init_db():
+def run_database_script(script):
     db = get_db()
+    with current_app.open_resource(script) as file:
+        script = file.read().decode("utf8")
+        placeholders = re.findall(r"{{(.*?)}}", script)
+        for placeholder in placeholders:
+            hashed_password = generate_password_hash(placeholder)
+            script = script.replace(f"{{{{{placeholder}}}}}", hashed_password)
+        try:
+            db.executescript(script)
+            db.commit()
+        except Exception as e:
+            print(f"Error executing the script: {e}")
 
-    with current_app.open_resource(current_app.config["DATABASE_INIT_SCRIPT"]) as f:
-        sql_script = f.read().decode("utf8")
-        for password in re.findall(r"{{(.*?)}}", sql_script):
-            sql_script = sql_script.replace(
-                f"{{{{{password}}}}}", generate_password_hash(password))
-        db.executescript(sql_script)
+
+def init_db():
+    run_database_script(current_app.config["DATABASE_INIT_SCRIPT"])
 
 
 def populate_db():
-    db = get_db()
-
-    with current_app.open_resource(current_app.config["DATABASE_POPULATE_SCRIPT"]) as f:
-        db.executescript(f.read().decode("utf8"))
+    run_database_script(current_app.config["DATABASE_POPULATE_SCRIPT"])
 
 
 @click.command("init-db")
