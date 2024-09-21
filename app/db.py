@@ -10,7 +10,6 @@ def get_db():
     if "db" not in g:
         g.db = sqlite3.connect(
             current_app.config["DATABASE_FILE"],
-            detect_types=sqlite3.PARSE_DECLTYPES
         )
         g.db.row_factory = sqlite3.Row
 
@@ -35,28 +34,36 @@ def run_database_script(script):
         try:
             db.executescript(script)
             db.commit()
+            return True
         except Exception as e:
             print(f"Error executing the script: {e}")
+            return False
 
 
 def init_db():
-    run_database_script(current_app.config["DATABASE_INIT_SCRIPT"])
+    return run_database_script(current_app.config["DATABASE_INIT_SCRIPT"])
 
 
 def populate_db():
-    run_database_script(current_app.config["DATABASE_POPULATE_SCRIPT"])
+    return run_database_script(current_app.config["DATABASE_POPULATE_SCRIPT"])
 
 
 @click.command("init-db")
 def init_db_command():
-    init_db()
-    click.echo("Database initialized.")
+    if init_db():
+        click.echo("Database initialized.")
+        return
+
+    click.echo("Database initialization failed.")
 
 
 @click.command("populate-db")
 def populate_db_command():
-    populate_db()
-    click.echo("Database populated.")
+    if populate_db():
+        click.echo("Database populated.")
+        return
+
+    click.echo("Database population failed.")
 
 
 def init_app(app):

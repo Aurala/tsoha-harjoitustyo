@@ -46,7 +46,8 @@ def shop():
 
     db = get_db()
     shop = db.execute(
-        "SELECT shop_id, user_id, name, description, is_available FROM shops WHERE user_id = ?", (g.user["user_id"],)
+        "SELECT shop_id, user_id, name, description, is_available FROM shops WHERE user_id = ?",
+        (g.user["user_id"],)
     ).fetchone()
 
     return render_template("admin/shop.html", shop=shop)
@@ -59,12 +60,12 @@ def products():
         pass
     
     db = get_db()
-    products = db.execute(
-        "SELECT product_id, user_id, name, description, price, quantity FROM Products WHERE user_id = ?",
+    own_products = db.execute(
+        "SELECT product_id, (SELECT name FROM Shops WHERE Shops.shop_id=Products.shop_id) AS shop_name, name, description, image, price, quantity FROM Products WHERE user_id=? ORDER BY product_id DESC;",
         (g.user["user_id"],)
     ).fetchall()
 
-    return render_template("admin/products.html")
+    return render_template("admin/products.html", products=own_products)
 
 
 @bp.route("/sales", methods=("GET", "POST"))

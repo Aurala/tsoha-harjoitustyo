@@ -54,9 +54,8 @@ def register():
                     (email, firstname, lastname, generate_password_hash(password)),
                 ).lastrowid
                 db.execute(
-                    "INSERT INTO Shops (user_id, name, description) VALUES (?, ?, ?)",
-                    (user_id, f"Käyttäjän {email} verkkokauppa",
-                     f"Verkkokaupan kuvaus"),
+                    "INSERT INTO Shops (user_id, name) VALUES (?, ?)",
+                    (user_id, f"Käyttäjän {email} verkkokauppa"),
                 )
                 db.commit()
             except db.IntegrityError:

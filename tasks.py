@@ -12,7 +12,7 @@ def lint(ctx):
 @task
 def format(ctx):
     print("Formatting code")
-    ctx.run("autopep8 --in-place --recursive app", pty=True)
+    ctx.run("autopep8 -v --in-place --recursive app", pty=True)
 
 @task
 def clean(ctx):
