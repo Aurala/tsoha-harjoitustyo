@@ -1,0 +1,20 @@
+{% extends 'auth/base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Rekisteröidy{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  <form method="post" class="auth-form">
+    <label for="email">Sähköpostiosoite</label>
+    <input name="email" id="email" required>
+    <label for="firstname">Etunimi</label>
+    <input name="firstname" id="firstname" required>
+    <label for="lastname">Sukunimi</label>
+    <input name="lastname" id="lastname" required>
+    <label for="password">Salasana</label>
+    <input type="password" name="password" id="password" required>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    <input type="submit" value="Rekisteröidy">
+  </form>
+{% endblock %}
