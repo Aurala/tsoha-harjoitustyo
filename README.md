@@ -44,7 +44,15 @@ inv initdb
 
 Alustettaessa tietokantaan luodaan käyttäjä 'admin@kauppakeskus.local' (salasana: 'supersecret').
 
-Testaamista helpottamaan voidaan tietokantaan luoda testisisältöä. Tästä lisää [täällä](documentation/testaaminen.md).
+Suositeltavaa: testaamista helpottamaan voidaan tietokantaan luoda testisisältöä. Tästä lisää [täällä](documentation/testaaminen.md).
+
+Ennen Ostoskeskuksen käynnistämistä on tehtävä vielä yksi pieni juttu. Projektin juureen tarvitaan tiedosto `.env`, jonka sisältö on seuraavanlainen:
+
+```
+SECRET_KEY="supersecret"
+```
+
+Avaimen sisällön voi määrittää vapaasti.
 
 Ohjelman ajaminen:
 
