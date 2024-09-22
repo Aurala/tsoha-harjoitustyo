@@ -8,7 +8,7 @@ Testisisältö ajetaan sisään tietokantaan:
 inv populatedb
 ```
 
-Testisisällön luominen on suositeltavaa ettei ohjelmaan tutustuakseen tarvitse rekisteröidä tunnuksia, luoda kauppoja ja tuotteita. Luotava sisältö on kuvattu alla.
+Testisisällön luominen on suositeltavaa. jotta ohjelmaan tutustuakseen tarvitse rekisteröidä tunnuksia, luoda kauppoja ja tuotteita. Luotava sisältö on kuvattu alla.
 
 ## Testisisällön uusiminen
 
@@ -32,8 +32,10 @@ Huomio:
 
 | käyttäjätunnus | salasana |
 | -------------- | -------- |
-| ... | ... |
+| iines@mailinator.com | iines |
+| hannu@mailinator.com | hannu |
+| pelle@mailinator.com | pelle |
 
 ### Muu testisisältö
 
-...
+Kaikille käyttäjille muodostuu automaattisesti verkkokauppa, joka on aktivoitu. Kussakin verkkokaupassa on yksi tuote kuvauksineen, tuotekuvineen yms.
