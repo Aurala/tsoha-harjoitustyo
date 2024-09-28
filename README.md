@@ -16,11 +16,9 @@ Harjoitustyössä toteutan Flaskilla yksinkertaisen Ostoskeskus-nimisen verkkoka
 
 Toteutuksen status päivitetty 22.9.2024.
 
-_Muista opinnoista johtuen olen hieman jäljessä toteutuksen suhteen. Täytyy kiriä seuraaviin palautuksiin! :)_
-
 ## Ajaminen
 
-Ohjelma on kehitetty macOS-ympäristössä (Apple Silicon) ja testattu yliopiston Cubbli Linux -koneissa. Ohjelman toimivuudesta muissa ympäristöissä ei ole tietoa.
+Ohjelma on kehitetty macOS-ympäristössä (Apple Silicon) ja testattu yliopiston Cubbli Linux -koneissa. Ensimmäisen vertaisarvioinnin perusteella ohjelman ajaminen [Windows Subsystem for Linux](https://learn.microsoft.com/en-us/windows/wsl/):n alla oli haasteellista, joten Windows-käyttäjille vahva suositus testata Cubbli Linux -koneella.
 
 ### Askel askeleelta
 
@@ -60,7 +58,7 @@ Ohjelman ajaminen:
 inv start
 ```
 
-Tämän jälkeen siirry selaimella web-osoitteeseen http://127.0.0.1:8080/.
+Tämän jälkeen siirry web-selaimella osoitteeseen http://127.0.0.1:8080/.
 
 ## Testaaminen
 
@@ -83,3 +81,4 @@ Lue lisää [testaamisesta](documentation/testaaminen.md).
 - Ohjelmoinnissa pyritty noudattamaan [Flask-projektin tutoriaalia](https://flask.palletsprojects.com/en/3.0.x/tutorial/) sekä kurssin ["Aineopintojen harjoitustyö: Ohjelmistotekniikka"](https://ohjelmistotekniikka-hy.github.io/) käytäntöjä
 - Tekoälyä käytetty sparrauskumppanina, mutta koodia sillä ei ole tuotettu
 - Grafiikka generoitu tekoälyllä, ei copyrightseja
+- Käytän tässä harjoituksessa tietokantaa kuvien tallentamiseen; ei varmasti fiksuin ratkaisu oikeaan käyttöön, mutta kuvittelin tällä taklattavan ongelmia polkujen ja oikeuksien kanssa erilaisissa ympäristöissä
