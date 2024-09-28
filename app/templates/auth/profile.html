@@ -2,6 +2,15 @@
 
 {% block content %}
 
-Coming soon: auth/profile.html
+<form method="post" class="auth-form">
+    <label for="email">Sähköpostiosoite</label>
+    <input name="email" id="email" readonly value="{{ g.user['email'] }}">
+    <label for="firstname">Etunimi</label>
+    <input name="firstname" id="firstname" required placeholder="2-25 merkkiä" value="{{ g.user['firstname'] }}">
+    <label for="lastname">Sukunimi</label>
+    <input name="lastname" id="lastname" required placeholder="2-25 merkkiä" value="{{ g.user['lastname'] }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    <input type="submit" value="Muuta tietojasi">
+  </form>
 
 {% endblock %}
