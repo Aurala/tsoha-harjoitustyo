@@ -7,13 +7,13 @@
 {% block content %}
   <form method="post" class="auth-form">
     <label for="email">Sähköpostiosoite</label>
-    <input name="email" id="email" required>
+    <input name="email" id="email" required placeholder="Tuleva käyttäjätunnuksesi">
     <label for="firstname">Etunimi</label>
-    <input name="firstname" id="firstname" required>
+    <input name="firstname" id="firstname" required placeholder="2-25 merkkiä">
     <label for="lastname">Sukunimi</label>
-    <input name="lastname" id="lastname" required>
+    <input name="lastname" id="lastname" required placeholder="2-25 merkkiä">
     <label for="password">Salasana</label>
-    <input type="password" name="password" id="password" required>
+    <input type="password" name="password" id="password" required placeholder="8-32 merkkiä">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
     <input type="submit" value="Rekisteröidy">
   </form>
