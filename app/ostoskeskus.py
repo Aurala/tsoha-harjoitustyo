@@ -24,7 +24,7 @@ def index():
     return render_template("ostoskeskus/index.html", newest_shops=newest_shops, newest_products=newest_products, popular_shops=popular_shops, popular_products=popular_products)
 
 
-@bp.route("/products", methods=("GET", "POST"))
+@bp.route("/products", methods=["GET", "POST"])
 def products():
     if request.method == "POST":
         search_term = request.form["search"]

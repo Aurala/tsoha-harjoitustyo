@@ -2,6 +2,18 @@
 
 {% block content %}
 
-Coming soon: cart/view.html
+    {% if not session["cart"] %}
+        Ostoskorisi on tyhjä.
+    {% else %}
+        Ostoskorisi sisältö:<br/>
+        {% for product_key, product_quantity in session["cart"].items() %}
+            {{ product_key }}: {{ product_quantity }}
+            <br/>
+        {% endfor %}
+    {% endif %}
+
+    <div class="list_footer">
+        <a href="{{ url_for('ostoskeskus.products') }}">Palaa kauppaan</a>
+    </div>
 
 {% endblock %}

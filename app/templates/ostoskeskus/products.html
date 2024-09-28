@@ -15,7 +15,11 @@
         <div class="quantity">Saatavilla: {{ product['quantity'] }} kpl</div>
         <div class="seller">Myyjä: {{ product['shop_name'] }}</div>
         {% if g.user %}
-            <div class="buy"><a href="{{ url_for('cart.add', product_id=product['product_id']) }}">Osta</a></div>
+            {% set product_key = "_" ~ product['product_id'] %}
+            {% if product_key in session["cart"] and session["cart"][product_key] > 0 %}
+                <div class="remove"><a href="{{ url_for('cart.remove', product_id=product['product_id']) }}">Poista</a></div>
+            {% endif %}
+                <div class="buy"><a href="{{ url_for('cart.add', product_id=product['product_id']) }}">Osta</a></div>
         {% else %}
             <div class="buy"><a href="{{ url_for('auth.login') }}">Kirjaudu</a></div>
         {% endif %}

@@ -10,11 +10,11 @@ Harjoitustyössä toteutan Flaskilla yksinkertaisen Ostoskeskus-nimisen verkkoka
 - Osittain toteutettu: Kirjautuneet käyttäjillä on ylläpitosivu, jonka kautta he voivat luoda verkkokaupan sisälle oman kauppansa.
 - Ei toteutettu: Kirjautuneet käyttäjät voivat muokata ylläpitosivun kautta oman kauppansa valikoimaa, saatavuustietoja, jne.
 - Osittain toteutettu: Kaikki käyttäjät voivat selata, etsiä ja katsella tuotteita.
-- Ei toteutettu: Kirjautuneet käyttäjät voivat lisätä kauppojen tuotteita ostoskoreihinsa ja tarvittaessa poistaa tuotteita niistä.
+- Osittain toteutettu: Kirjautuneet käyttäjät voivat lisätä kauppojen tuotteita ostoskoreihinsa ja tarvittaessa poistaa tuotteita niistä.
 - Ei toteutettu: Kirjautunut käyttäjä voi tilata ostoskorinsa sisältämät tuotteet (maksutapana kuvitteellinen lasku, joka toimitetaan rekisteröinnissä annettuun osoitteeseen). 
 - Ei toteutettu: Kirjautuneilla käyttäjillä on analytiikkasivu, josta he voivat seurata toteutuneita myyntejä ja varastosaldoja.
 
-Toteutuksen status päivitetty 22.9.2024.
+Toteutuksen status päivitetty 28.9.2024.
 
 ## Ajaminen
 
