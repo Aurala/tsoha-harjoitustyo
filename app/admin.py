@@ -45,6 +45,7 @@ def shop():
         flash(error)
 
     db = get_db()
+
     shop = db.execute(
         "SELECT shop_id, user_id, name, description, is_available FROM shops WHERE user_id = ?",
         (g.user["user_id"],)
@@ -56,19 +57,43 @@ def shop():
 @bp.route("/products", methods=("GET", "POST"))
 @login_required
 def products():
+
+    products_per_page = 8
+
     if request.method == "POST":
-        pass
-    
+        return redirect(url_for("admin.products"))
+
+    try:
+        page = request.args.get("page", 1, type=int)
+    except ValueError:
+        page = 1
+
     db = get_db()
-    own_products = db.execute(
-        "SELECT product_id, (SELECT name FROM Shops WHERE Shops.shop_id=Products.shop_id) AS shop_name, name, description, image, price, quantity FROM Products WHERE user_id=? ORDER BY product_id DESC;",
-        (g.user["user_id"],)
-    ).fetchall()
 
-    return render_template("admin/products.html", products=own_products)
+    total_products = db.execute("SELECT COUNT(product_id) FROM Products WHERE user_id = ?;",
+                                (g.user["user_id"],)
+                                ).fetchone()
+    
+    if total_products[0] == 0:
+        flash("Sinulla ei ole tuotteita")
+        render_template("admin/products.html", products=[], current_page=1, total_pages=1)
+
+    total_pages = (total_products[0] + products_per_page - 1) // products_per_page
+
+    filtered_products = db.execute("SELECT product_id, (SELECT name FROM Shops WHERE Shops.shop_id=Products.shop_id) AS shop_name, name, description, image, price, quantity FROM Products WHERE user_id = ? ORDER BY product_id DESC LIMIT ? OFFSET ?;",
+                                   (g.user["user_id"], products_per_page, (page-1)*products_per_page)
+                                   ).fetchall()
+    
+    return render_template("admin/products.html", products=filtered_products, total_products=total_products[0], current_page=page, total_pages=total_pages)
 
 
-@bp.route("/sales", methods=("GET", "POST"))
+@bp.route("/edit", methods=["GET"])
+@login_required
+def edit():
+    return render_template("admin/edit.html")
+
+
+@bp.route("/sales", methods=["GET"])
 @login_required
 def sales():
     return render_template("admin/sales.html")

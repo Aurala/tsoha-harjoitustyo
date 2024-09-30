@@ -171,6 +171,7 @@ header > h1 {
     display: flex;
     justify-content: center;
     gap: 20px;
+    margin-bottom: 10px;
 }
 .tab > a, .list_footer > a {
     color: #000000;
