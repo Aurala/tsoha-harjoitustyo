@@ -26,10 +26,29 @@
     </div>
 {% endfor %}
 </div>
+
+<div class="list_footer">
+    {% if current_page > 1 %}
+        <a href="{{ url_for('ostoskeskus.products', page=current_page-1) }}">Edellinen sivu</a>
+    {% endif %}
+    {% for page_number in range(1, total_pages + 1) %}
+        {% if page_number == current_page %}
+            <b>{{ page_number }}</b>
+        {% else %}
+            <a href="{{ url_for('ostoskeskus.products', page=page_number) }}">{{ page_number }}</a>
+        {% endif %}
+    {% endfor %}
+    {% if current_page < total_pages %}
+        <a href="{{ url_for('ostoskeskus.products', page=current_page+1) }}">Seuraava sivu</a>
+    {% endif %}
+</div>
+
 <form action="{{ url_for('ostoskeskus.products') }}" method="get" class="search-form">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
     <input type="text" name="search" id="search" placeholder="Etsi tuotteita..." required>
     <input type="submit" value="Etsi">
   </form>
+
+
 
 {% endblock %}
