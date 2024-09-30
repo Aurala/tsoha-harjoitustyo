@@ -59,9 +59,9 @@
     </div>
   </div>
 </div>
-<form action="{{ url_for('ostoskeskus.products') }}" method="post" class="search-form">
+<form action="{{ url_for('ostoskeskus.products') }}" method="get" class="search-form">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-  <input type="text" name="search" id="search" placeholder="Etsi tuotteita...">
+  <input type="text" name="search" id="search" placeholder="Etsi tuotteita..." required>
   <input type="submit" value="Etsi">
 </form>
 {% endblock %}
