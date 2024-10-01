@@ -21,18 +21,22 @@
     
     <div class="list_footer">
         {% if current_page > 1 %}
-            <a href="{{ url_for('ostoskeskus.products', page=current_page-1) }}">Edellinen sivu</a>
+            <a href="{{ url_for('admin.products', page=current_page-1) }}">Edellinen sivu</a>
         {% endif %}
         {% for page_number in range(1, total_pages + 1) %}
             {% if page_number == current_page %}
                 <b>{{ page_number }}</b>
             {% else %}
-                <a href="{{ url_for('ostoskeskus.products', page=page_number) }}">{{ page_number }}</a>
+                <a href="{{ url_for('admin.products', page=page_number) }}">{{ page_number }}</a>
             {% endif %}
         {% endfor %}
         {% if current_page < total_pages %}
-            <a href="{{ url_for('ostoskeskus.products', page=current_page+1) }}">Seuraava sivu</a>
+            <a href="{{ url_for('admin.products', page=current_page+1) }}">Seuraava sivu</a>
         {% endif %}
-    </div>    
+    </div>
+
+    <div class="list_footer">
+        <a href="{{ url_for('admin.add') }}">Lisää tuote</a>
+    </div>
 
 {% endblock %}

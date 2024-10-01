@@ -146,5 +146,5 @@ def load_logged_in_user():
         g.user = None
     else:
         g.user = get_db().execute(
-            "SELECT user_id, firstname, lastname, email, is_admin FROM Users WHERE user_id = ?", (user_id,)
+            "SELECT user_id, (SELECT shop_id FROM Shops WHERE user_id=Users.user_id) AS shop_id, firstname, lastname, email, is_admin FROM Users WHERE user_id = ?", (user_id,)
         ).fetchone()

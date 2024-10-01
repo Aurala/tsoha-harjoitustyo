@@ -87,10 +87,96 @@ def products():
     return render_template("admin/products.html", products=filtered_products, total_products=total_products[0], current_page=page, total_pages=total_pages)
 
 
-@bp.route("/edit", methods=["GET"])
+@bp.route("/add", methods=["GET", "POST"])
+@login_required
+def add():
+    
+    if request.method == "POST":
+
+        # TODO: Update image
+
+        db = get_db()
+
+        # TODO: Input validation
+
+        name = request.form.get("name", None, type=str)
+        description = request.form.get("description", None, type=str)
+        price = request.form.get("price", 0, type=float)
+        quantity = request.form.get("quantity", 0, type=int)
+        if request.form.get("is_available"):
+            is_available = 1
+        else:
+            is_available = 0
+
+        db.execute("INSERT INTO Products (user_id, shop_id, name, description, price, quantity, is_available) VALUES (?, ?, ?, ?, ?, ?, ?);",
+                   (g.user["user_id"], g.user["shop_id"], name, description, price, quantity, is_available)
+        )
+        db.commit()
+
+        flash("Tuotteen tiedot päivitetty.")
+        return redirect(url_for("admin.products"))
+
+
+        return redirect(url_for("admin.edit"))
+    
+    return render_template("admin/edit.html", product=[])
+
+@bp.route("/edit", methods=["GET", "POST"])
 @login_required
 def edit():
-    return render_template("admin/edit.html")
+
+    if request.method == "POST":
+
+        # TODO: Update image
+
+        db = get_db()
+
+        product_id = request.form.get("product_id", None, type=int)
+
+        if product_id is None:
+            flash("Tuotetta ei ole olemassa.")
+            return redirect(url_for("admin.products"))
+
+        filtered_product = db.execute("SELECT product_id, user_id, shop_id, name, description, image, price, quantity, is_available FROM Products WHERE product_id=? AND user_id=?;",
+                            (product_id, g.user["user_id"],)
+                            ).fetchone()
+        
+        if len(filtered_product) == 0:
+            flash("Tuotetta ei ole olemassa.")
+            return redirect(url_for("admin.products"))
+
+        # TODO: Input validation
+
+        name = request.form.get("name", filtered_product["name"], type=str)
+        description = request.form.get("description", filtered_product["description"], type=str)
+        price = request.form.get("price", filtered_product["price"], type=float)
+        quantity = request.form.get("quantity", filtered_product["quantity"], type=int)
+        if request.form.get("is_available"):
+            is_available = 1
+        else:
+            is_available = 0
+
+        db.execute("UPDATE Products SET name=?, description=?, price=?, quantity=?, is_available=? WHERE product_id=? AND user_id=?;",
+                   (name, description, price, quantity, is_available, product_id, g.user["user_id"],)
+        )
+        db.commit()
+
+        flash("Tuotteen tiedot päivitetty.")
+        return redirect(url_for("admin.products"))
+
+    product_id = request.args.get("product_id", None, type=int)
+
+    if product_id is None:
+        flash("Tuotetta ei ole olemassa.")
+        return redirect(url_for("admin.products"))
+
+    db = get_db()
+
+    filtered_product = db.execute("SELECT product_id, user_id, shop_id, name, description, image, price, quantity, is_available FROM Products WHERE product_id=? AND user_id=?;",
+                         (product_id, g.user["user_id"],)
+                        ).fetchone()
+    
+    return render_template("admin/edit.html", product=filtered_product)
 
 
 @bp.route("/sales", methods=["GET"])
