@@ -24,6 +24,11 @@ def index():
     return render_template("ostoskeskus/index.html", newest_shops=newest_shops, newest_products=newest_products, popular_shops=popular_shops, popular_products=popular_products)
 
 
+@bp.route("/shops", methods=["GET"])
+def shops():
+    return render_template("ostoskeskus/shops.html")
+
+
 @bp.route("/products", methods=["GET"])
 def products():
 
