@@ -5,7 +5,13 @@
 <div class="grid">
     {% for product in products %}
         <div class="listing">
-            <div class="image"><img src="{{ product['image'] }}"></div>
+
+            {% if product['image'] %}
+                <div class="image"><img src="{{ product['image'] }}"></div>
+            {% else %}
+                <div class="image"><img src="https://placehold.co/200x200?text=Kuva+puuttuu"></div>
+            {% endif %}
+            
             <div class="name">{{ product['name'] }}</div>
             <div class="description">{{ product['description'] }}</div>
     
