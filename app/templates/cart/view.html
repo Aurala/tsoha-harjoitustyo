@@ -3,13 +3,36 @@
 {% block content %}
 
     {% if not session["cart"] %}
+
         Ostoskorisi on tyhjä.
+    
     {% else %}
-        Ostoskorisi sisältö:<br/>
-        {% for product_key, product_quantity in session["cart"].items() %}
-            {{ product_key }}: {{ product_quantity }}
-            <br/>
-        {% endfor %}
+
+        <div class="grid">
+            {% for product in products %}
+                <div class="listing">
+                    <div class="image"><img src="{{ product['image'] }}"></div>
+                    <div class="name">{{ product['name'] }}</div>
+                    <div class="description">{{ product['description'] }}</div>
+            
+                    {# TODO: Use localization here #}
+                    <div class="price">{{ product['price'] }} &#8364; (sis. ALV)</div>
+
+                    <div class="seller">Myyjä: {{ product['shop_name'] }}</div>
+                    {% if g.user %}
+                        {% set product_key = "_" ~ product['product_id'] %}
+                        <div class="quantity">Kappaletta: {{ session["cart"][product_key] }} kpl</div>
+                        {% if product_key in session["cart"] and session["cart"][product_key] > 0 %}
+                            <div class="remove"><a href="{{ url_for('cart.remove', product_id=product['product_id']) }}">Vähennä</a></div>
+                        {% endif %}
+                            <div class="buy"><a href="{{ url_for('cart.add', product_id=product['product_id']) }}">Lisää</a></div>
+                    {% else %}
+                        <div class="buy"><a href="{{ url_for('auth.login') }}">Kirjaudu</a></div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+
     {% endif %}
 
     <div class="list_footer">
