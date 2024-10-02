@@ -2,29 +2,24 @@
 
 ## Testisisällön luominen
 
-Testisisältö ajetaan sisään tietokantaan:
+Testisisällön luominen on suositeltavaa. jotta ohjelmaan tutustuakseen tarvitse rekisteröidä tunnuksia, luoda kauppoja ja tuotteita. Luotava sisältö on kuvattu alla.
+
+Testisisältö ajetaan sisään tietokantaan Poetryä käyttäen näin:
 
 ```
 inv populatedb
 ```
 
-Testisisällön luominen on suositeltavaa. jotta ohjelmaan tutustuakseen tarvitse rekisteröidä tunnuksia, luoda kauppoja ja tuotteita. Luotava sisältö on kuvattu alla.
+Tai sitten manuaalisesti:
+
+```
+TODO: OHJEET TÄHÄN
+```
+
 
 ## Testisisällön uusiminen
 
-Pääset aina takaisin lähtöpisteeseen näillä komennoilla:
-
-```
-inv initdb
-```
-
-```
-inv populatedb
-```
-
-Huomio:
-- Kaikki tietokantaan tehdyt muutokset tuhoutuvat
-- `inv populatedb` pitää aina ajaa välittömästi tietokannan initialisoinnin jälkeen
+Pääset aina takaisin lähtöpisteeseen [alustamalla tietokannan](../README.md#ajaminen) uudelleen sekä [luomalla testisisällön](#testisisällön-luominen) uudelleen.
 
 ## Testisisältö
 
@@ -38,4 +33,4 @@ Huomio:
 
 ### Muu testisisältö
 
-Kaikille käyttäjille muodostuu automaattisesti verkkokauppa, joka on aktivoitu. Kussakin verkkokaupassa on yksi tuote kuvauksineen, tuotekuvineen yms.
+Kaikille testikäyttäjille muodostuu automaattisesti verkkokauppa, joka on aktivoitu. Kussakin verkkokaupassa on yksi tuote kuvauksineen, tuotekuvineen yms.
