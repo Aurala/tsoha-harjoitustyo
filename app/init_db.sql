@@ -39,12 +39,13 @@ CREATE TABLE Products (
 CREATE TABLE Orders (
     order_id INTEGER PRIMARY KEY,
     user_id INTEGER REFERENCES Users(user_id),
-    ordered DATETIME);
+    ordered DATETIME DEFAULT CURRENT_TIMESTAMP);
 
 CREATE TABLE OrderedProducts (
     item_id INTEGER PRIMARY KEY,
     order_id INTEGER REFERENCES Orders(order_id),
     product_id INTEGER REFERENCES Products(product_id),
+    quantity INTEGER,
     price REAL);
 
 INSERT INTO Users (firstname, lastname, password, email, is_admin) VALUES ('Admin', 'User', '{{supersecret}}', 'admin@kauppakeskus.local', TRUE);

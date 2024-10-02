@@ -44,7 +44,24 @@ def view():
 @bp.route("/order", methods=["GET"])
 @login_required
 def order():
-    return
+
+    products = get_cart()
+
+    db = get_db()
+
+    order_id = db.execute("INSERT INTO Orders (user_id) VALUES (?);",
+                            (g.user["user_id"],)).lastrowid
+
+    for product in products:
+        db.execute("INSERT INTO OrderedProducts (order_id, product_id, quantity) VALUES (?, ?, ?);",
+                   (order_id, product["product_id"], session["cart"]["_" + str(product["product_id"])]))
+
+    db.commit()
+
+    session["cart"] = {}
+    flash("Tilaus onnistui!")
+    
+    return render_template("cart/receipt.html")
 
 
 @bp.route("/add/<int:product_id>", methods=["GET"])

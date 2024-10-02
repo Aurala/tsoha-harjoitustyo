@@ -43,6 +43,11 @@
 
     <div class="list_footer">
         <a href="{{ url_for('ostoskeskus.products') }}">Palaa kauppaan</a>
+
+        {% if session["cart"] %}
+            <a href="{{ url_for('cart.order') }}">Tilaa tuotteet</a>
+        {% endif %}
+        
     </div>
 
 {% endblock %}
