@@ -16,6 +16,7 @@ def index():
 @bp.route("/shop", methods=("GET", "POST"))
 @login_required
 def shop():
+
     if request.method == "POST":
 
         error = None
@@ -73,24 +74,27 @@ def products():
     total_products = db.execute("SELECT COUNT(product_id) FROM Products WHERE user_id = ?;",
                                 (g.user["user_id"],)
                                 ).fetchone()
-    
+
     if total_products[0] == 0:
         flash("Sinulla ei ole tuotteita")
-        render_template("admin/products.html", products=[], current_page=1, total_pages=1)
+        render_template("admin/products.html", products=[],
+                        current_page=1, total_pages=1)
 
-    total_pages = (total_products[0] + products_per_page - 1) // products_per_page
+    total_pages = (total_products[0] +
+                   products_per_page - 1) // products_per_page
 
     filtered_products = db.execute("SELECT product_id, (SELECT name FROM Shops WHERE Shops.shop_id=Products.shop_id) AS shop_name, name, description, image, price, quantity FROM Products WHERE user_id = ? ORDER BY product_id DESC LIMIT ? OFFSET ?;",
-                                   (g.user["user_id"], products_per_page, (page-1)*products_per_page)
+                                   (g.user["user_id"], products_per_page,
+                                    (page-1)*products_per_page)
                                    ).fetchall()
-    
+
     return render_template("admin/products.html", products=filtered_products, total_products=total_products[0], current_page=page, total_pages=total_pages)
 
 
 @bp.route("/add", methods=["GET", "POST"])
 @login_required
 def add():
-    
+
     if request.method == "POST":
 
         # TODO: Update image
@@ -109,17 +113,16 @@ def add():
             is_available = 0
 
         db.execute("INSERT INTO Products (user_id, shop_id, name, description, price, quantity, is_available) VALUES (?, ?, ?, ?, ?, ?, ?);",
-                   (g.user["user_id"], g.user["shop_id"], name, description, price, quantity, is_available)
-        )
+                   (g.user["user_id"], g.user["shop_id"], name,
+                    description, price, quantity, is_available)
+                   )
         db.commit()
 
         flash("Tuotteen tiedot päivitetty.")
         return redirect(url_for("admin.products"))
 
-
-        return redirect(url_for("admin.edit"))
-    
     return render_template("admin/edit.html", product=[])
+
 
 @bp.route("/edit", methods=["GET", "POST"])
 @login_required
@@ -138,9 +141,9 @@ def edit():
             return redirect(url_for("admin.products"))
 
         filtered_product = db.execute("SELECT product_id, user_id, shop_id, name, description, image, price, quantity, is_available FROM Products WHERE product_id=? AND user_id=?;",
-                            (product_id, g.user["user_id"],)
-                            ).fetchone()
-        
+                                      (product_id, g.user["user_id"],)
+                                      ).fetchone()
+
         if len(filtered_product) == 0:
             flash("Tuotetta ei ole olemassa.")
             return redirect(url_for("admin.products"))
@@ -148,17 +151,21 @@ def edit():
         # TODO: Input validation
 
         name = request.form.get("name", filtered_product["name"], type=str)
-        description = request.form.get("description", filtered_product["description"], type=str)
-        price = request.form.get("price", filtered_product["price"], type=float)
-        quantity = request.form.get("quantity", filtered_product["quantity"], type=int)
+        description = request.form.get(
+            "description", filtered_product["description"], type=str)
+        price = request.form.get(
+            "price", filtered_product["price"], type=float)
+        quantity = request.form.get(
+            "quantity", filtered_product["quantity"], type=int)
         if request.form.get("is_available"):
             is_available = 1
         else:
             is_available = 0
 
         db.execute("UPDATE Products SET name=?, description=?, price=?, quantity=?, is_available=? WHERE product_id=? AND user_id=?;",
-                   (name, description, price, quantity, is_available, product_id, g.user["user_id"],)
-        )
+                   (name, description, price, quantity,
+                    is_available, product_id, g.user["user_id"],)
+                   )
         db.commit()
 
         flash("Tuotteen tiedot päivitetty.")
@@ -173,9 +180,9 @@ def edit():
     db = get_db()
 
     filtered_product = db.execute("SELECT product_id, user_id, shop_id, name, description, image, price, quantity, is_available FROM Products WHERE product_id=? AND user_id=?;",
-                         (product_id, g.user["user_id"],)
-                        ).fetchone()
-    
+                                  (product_id, g.user["user_id"],)
+                                  ).fetchone()
+
     return render_template("admin/edit.html", product=filtered_product)
 
 

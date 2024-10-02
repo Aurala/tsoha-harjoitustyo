@@ -1,6 +1,7 @@
 {% extends 'admin/base.html' %}
 
 {% block content %}
+
   <form method="post" class="admin-form">
     <label for="name">Nimi</label>
     <input name="name" id="name" required value="{{ shop['name'] }}">
@@ -9,4 +10,5 @@
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
     <input type="submit" value="Muuta tietoja">
   </form>
+
 {% endblock %}

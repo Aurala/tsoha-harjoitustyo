@@ -92,7 +92,8 @@ def profile():
                 (firstname, lastname, g.user["user_id"]),
             )
             g.user = get_db().execute(
-                "SELECT user_id, firstname, lastname, email, is_admin FROM Users WHERE user_id = ?", (g.user["user_id"],)
+                "SELECT user_id, firstname, lastname, email, is_admin FROM Users WHERE user_id = ?", (
+                    g.user["user_id"],)
             ).fetchone()
 
             flash("Tietojen päivitys onnistui.")

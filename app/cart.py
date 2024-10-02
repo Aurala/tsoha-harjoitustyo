@@ -24,7 +24,7 @@ def get_cart():
     db = get_db()
 
     filtered_products = db.execute(f"SELECT product_id, user_id, shop_id, name, description, image, price, quantity, is_available FROM Products WHERE product_id IN ({placeholders});",
-                                      product_ids).fetchall()
+                                   product_ids).fetchall()
 
     return filtered_products
 
@@ -66,7 +66,8 @@ def add(product_id):
         flash(f"Tuotetta '{product['name']}' ei ole saatavilla.")
     else:
         # Numeric dictionary keys are not allowed, using "_" as a prefix
-        session["cart"]["_" + str(product_id)] = session["cart"].get("_" + str(product_id), 0) + 1
+        session["cart"]["_" +
+                        str(product_id)] = session["cart"].get("_" + str(product_id), 0) + 1
         flash(f"Tuote '{product["name"]}' lisätty ostoskoriin.")
 
     return redirect(url_for("cart.view"))
