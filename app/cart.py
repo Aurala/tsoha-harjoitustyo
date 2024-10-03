@@ -53,8 +53,8 @@ def order():
                             (g.user["user_id"],)).lastrowid
 
     for product in products:
-        db.execute("INSERT INTO OrderedProducts (order_id, product_id, quantity) VALUES (?, ?, ?);",
-                   (order_id, product["product_id"], session["cart"]["_" + str(product["product_id"])]))
+        db.execute("INSERT INTO OrderedProducts (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?);",
+                   (order_id, product["product_id"], session["cart"]["_" + str(product["product_id"])], product["price"]))
 
     db.commit()
 
