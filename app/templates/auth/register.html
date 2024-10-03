@@ -15,6 +15,12 @@
     <input name="firstname" id="firstname" required placeholder="2-25 merkkiä">
     <label for="lastname">Sukunimi</label>
     <input name="lastname" id="lastname" required placeholder="2-25 merkkiä">
+    <label for="streetaddress">Katuosoite</label>
+    <input name="streetaddress" id="streetaddress" required placeholder="5-25 merkkiä">
+    <label for="postalcode">Postinumero</label>
+    <input name="postalcode" id="postalcode" required placeholder="5 merkkiä">
+    <label for="city">Kaupunki</label>
+    <input name="city" id="city" required placeholder="2-25 merkkiä">
     <label for="password">Salasana</label>
     <input type="password" name="password" id="password" required placeholder="8-32 merkkiä">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>

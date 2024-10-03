@@ -9,6 +9,12 @@
     <input name="firstname" id="firstname" required placeholder="2-25 merkkiä" value="{{ g.user['firstname'] }}">
     <label for="lastname">Sukunimi</label>
     <input name="lastname" id="lastname" required placeholder="2-25 merkkiä" value="{{ g.user['lastname'] }}">
+    <label for="streetaddress">Katuosoite</label>
+    <input name="streetaddress" id="streetaddress" required placeholder="5-25 merkkiä" value="{{ g.user['streetaddress'] }}">
+    <label for="postalcode">Postinumero</label>
+    <input name="postalcode" id="postalcode" required placeholder="5 merkkiä" value="{{ g.user['postalcode'] }}">
+    <label for="city">Kaupunki</label>
+    <input name="city" id="city" required placeholder="2-25 merkkiä" value="{{ g.user['city'] }}">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
     <input type="submit" value="Muuta tietojasi">
   </form>
