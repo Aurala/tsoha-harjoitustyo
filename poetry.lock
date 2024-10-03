@@ -139,21 +139,6 @@ async = ["asgiref (>=3.2)"]
 dotenv = ["python-dotenv"]
 
 [[package]]
-name = "flask-login"
-version = "0.6.3"
-description = "User authentication and session management for Flask."
-optional = false
-python-versions = ">=3.7"
-files = [
-    {file = "Flask-Login-0.6.3.tar.gz", hash = "sha256:5e23d14a607ef12806c699590b89d0f0e0d67baeec599d75947bf9c147330333"},
-    {file = "Flask_Login-0.6.3-py3-none-any.whl", hash = "sha256:849b25b82a436bf830a054e74214074af59097171562ab10bfa999e6b78aae5d"},
-]
-
-[package.dependencies]
-Flask = ">=1.0.4"
-Werkzeug = ">=1.0.1"
-
-[[package]]
 name = "flask-wtf"
 version = "1.2.1"
 description = "Form rendering, validation, and CSRF protection for Flask with WTForms."
@@ -541,4 +526,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "698f147821193356e090a42a12194ac0ed7a8f2eb2e08d5d42dcabb41cd0232c"
+content-hash = "995f9d1a3431a74e1d3591371a03bc211f2cb897acba1086010c02f4072939f4"
