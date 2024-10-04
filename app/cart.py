@@ -83,12 +83,12 @@ def add(product_id):
     if product is None:
         flash(f"Tuotetta {product_id} ei ole olemassa.")
     elif product["quantity"] < 1:
-        flash(f"Tuotetta '{product['name']}' ei ole saatavilla.")
+        flash(f"Tuotetta {product['name']} ei ole saatavilla.")
     else:
         # Numeric dictionary keys are not allowed, using "_" as a prefix
         session["cart"]["_" +
                         str(product_id)] = session["cart"].get("_" + str(product_id), 0) + 1
-        flash(f"Tuote '{product["name"]}' lisätty ostoskoriin.")
+        flash(f"Tuote {product['name']} lisätty ostoskoriin.")
 
     return redirect(url_for("cart.view"))
 
