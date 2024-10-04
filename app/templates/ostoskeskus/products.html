@@ -14,10 +14,7 @@
 
         <div class="name">{{ product['name'] }}</div>
         <div class="description">{{ product['description'] }}</div>
-
-        {# TODO: Use localization here #}
-        <div class="price">{{ product['price'] }} &#8364; (sis. ALV)</div>
-        
+        <div class="price">{{ '%.2f' % product['price'] }} &#8364; (sis. ALV)</div>        
         <div class="quantity">Saatavilla: {{ product['quantity'] }} kpl</div>
         <div class="seller">Myyjä: {{ product['shop_name'] }}</div>
         {% if g.user %}
