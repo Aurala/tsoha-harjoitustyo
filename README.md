@@ -2,29 +2,77 @@
 
 Tässä repositoriossa on Markus Auralan harjoitustyö kurssille [TKT20019 Tietokannat ja web-ohjelmointi](https://hy-tsoha.github.io/materiaali/).
 
+Dokumentti päivitetty: 5.10.2024
+
 ## Aihe
 
 Harjoitustyössä toteutan Flaskilla yksinkertaisen Ostoskeskus-nimisen verkkokaupan, jossa on seuraavanlaisia toiminnallisuuksia:
 
 - Toteutettu: Käyttäjä voi rekisteröityä verkkokauppaan ja kirjautua sisään/ulos.
-- Osittain toteutettu: Kirjautuneet käyttäjillä on ylläpitosivu, jonka kautta he voivat luoda verkkokaupan sisälle oman kauppansa.
-- Ei toteutettu: Kirjautuneet käyttäjät voivat muokata ylläpitosivun kautta oman kauppansa valikoimaa, saatavuustietoja, jne.
-- Osittain toteutettu: Kaikki käyttäjät voivat selata, etsiä ja katsella tuotteita.
-- Ei toteutettu: Kirjautuneet käyttäjät voivat lisätä kauppojen tuotteita ostoskoreihinsa ja tarvittaessa poistaa tuotteita niistä.
-- Ei toteutettu: Kirjautunut käyttäjä voi tilata ostoskorinsa sisältämät tuotteet (maksutapana kuvitteellinen lasku, joka toimitetaan rekisteröinnissä annettuun osoitteeseen). 
+- Toteutettu: Kirjautuneilla käyttäjillä on ylläpitosivu, jonka kautta he voivat aktivoida verkkokaupan sisällä oman kauppansa.
+- Osittain toteutettu (kuvia ei voi lisätä/muuttaa): Kirjautuneet käyttäjät voivat muokata ylläpitosivun kautta oman kauppansa valikoimaa, saatavuustietoja, jne.
+- Toteutettu: Kaikki käyttäjät voivat selata, etsiä ja katsella tuotteita.
+- Toteutettu: Kirjautuneet käyttäjät voivat lisätä kauppojen tuotteita ostoskoreihinsa ja tarvittaessa poistaa tuotteita niistä.
+- Toteutettu: Kirjautunut käyttäjä voi tilata ostoskorinsa sisältämät tuotteet (maksutapana kuvitteellinen lasku, joka toimitetaan rekisteröinnissä annettuun osoitteeseen).
 - Ei toteutettu: Kirjautuneilla käyttäjillä on analytiikkasivu, josta he voivat seurata toteutuneita myyntejä ja varastosaldoja.
 
-Toteutuksen status päivitetty 22.9.2024.
-
-_Muista opinnoista johtuen olen hieman jäljessä toteutuksen suhteen. Täytyy kiriä seuraaviin palautuksiin! :)_
+Toteutettu = perustoiminnallisuus löytyy, mutta parantelutarvetta on. Lista [täällä](#tiedossa-olevat-ongelmat--puutteet--rajoitukset).
 
 ## Ajaminen
 
-Ohjelma on kehitetty macOS-ympäristössä (Apple Silicon) ja testattu yliopiston Cubbli Linux -koneissa. Ohjelman toimivuudesta muissa ympäristöissä ei ole tietoa.
+Ohjelma on kehitetty macOS-ympäristössä (Apple Silicon) ja testattu yliopiston Cubbli Linux -koneissa. Ensimmäisen vertaisarvioinnin perusteella ohjelman ajaminen [Windows Subsystem for Linux](https://learn.microsoft.com/en-us/windows/wsl/):n alla oli haasteellista, joten Windows-käyttäjille vahva suositus testata Cubbli Linux -koneella.
 
 ### Askel askeleelta
 
-Kun projekti on kopioitu haluttuun paikkaan, siirrytään koodin sisältävään hakemistoon ja ajetaan komento:
+Alla ohjeet ohjelman ajamiseen manuaalisesti tai Poetryn avulla. Ensimmäinen askel on kummassakin vaihtoehdossa sama eli projektin kloonaus omaan ympäristöön.
+
+#### Manuaalisesti
+
+Siirrytään koodin sisältävään hakemistoon ja luodaan virtuaaliympäristö:
+
+```
+python3 -m venv venv
+```
+
+Aktivoidaan virtuaaliympäristö:
+
+```
+source venv/bin/activate
+```
+
+Asennetaan tarvittavat riippuvuudet:
+
+```
+pip install -r requirements.txt
+```
+
+Alustetaan tietokanta:
+
+```
+flask --app app init-db
+```
+
+Alustettaessa tietokantaan luodaan käyttäjä 'admin@kauppakeskus.local' (salasana: 'supersecret').
+
+Suositeltavaa: testaamista helpottamaan voidaan tietokantaan luoda testisisältöä. Tästä lisää [täällä](documentation/testaaminen.md).
+
+Ennen Ostoskeskuksen käynnistämistä on tehtävä vielä yksi pieni juttu. Projektin juureen tarvitaan tiedosto `.env`, jonka sisältö on seuraavanlainen:
+
+```
+SECRET_KEY="supersecret"
+```
+
+Ohjelman käynnistäminen:
+
+```
+flask run
+```
+
+Tämän jälkeen siirry web-selaimella osoitteeseen http://127.0.0.1:5000/.
+
+#### Poetryä käyttäen
+
+Siirrytään koodin sisältävään hakemistoon ja ajetaan komento:
 
 ```
 poetry install
@@ -60,7 +108,7 @@ Ohjelman ajaminen:
 inv start
 ```
 
-Tämän jälkeen siirry selaimella web-osoitteeseen http://127.0.0.1:8080/.
+Tämän jälkeen siirry web-selaimella osoitteeseen http://127.0.0.1:8080/.
 
 ## Testaaminen
 
@@ -68,18 +116,15 @@ Lue lisää [testaamisesta](documentation/testaaminen.md).
 
 ## Tiedossa olevat ongelmat / puutteet / rajoitukset
 
+- **Tietokannan vaihtaminen SQLitestä PostgreSQL:ään tehtävä**
 - Tietokantakyselyt olisi syytä siirtää johonkin funktioon koodin monistamisen sijaan; samalla virheenkäsittelyn lisääminen
-- Syöttökenttien validointi sivulla, tai vähintään edes tieto siitä mitä kenttään odotetaan
 - `inv format` (`autopep8`) ei tee kaikkia korjauksia; syy tuntematon, tutkittava
-- Etusivulla kauppojen ja tuotteiden linkit puuttuvat
-- Tuotelistaussivu on, mutta toistaiseksi...
-    - Ei osaa filtteröidä tuotteita hakusanojen, kauppojen tai muidenkaan kriteerien perusteella
-    - Ei osaa sivuttaa
-    - Ostoskoritoiminnallisuus puuttuu
-    - Hintojen lokalisointi locale-kirjastoa käyttäen
+- Kuvien lisääminen ja muokkaaminen ei toimi
 
 ## Arvostelijalle tiedoksi
 
 - Ohjelmoinnissa pyritty noudattamaan [Flask-projektin tutoriaalia](https://flask.palletsprojects.com/en/3.0.x/tutorial/) sekä kurssin ["Aineopintojen harjoitustyö: Ohjelmistotekniikka"](https://ohjelmistotekniikka-hy.github.io/) käytäntöjä
 - Tekoälyä käytetty sparrauskumppanina, mutta koodia sillä ei ole tuotettu
 - Grafiikka generoitu tekoälyllä, ei copyrightseja
+- Käytän tässä harjoituksessa tietokantaa kuvien tallentamiseen; ei varmasti fiksuin ratkaisu oikeaan käyttöön, mutta kuvittelin tällä taklattavan ongelmia polkujen ja oikeuksien kanssa erilaisissa ympäristöissä
+- Olen hölmöyttäni sivuuttanut ohjeen PostgreSQL:n käytöstä ja käyttänyt SQLiteä, tämän virheen korjaan lopulliseen palautukseen (sovittu ohjaajan kanssa, että en tee ennen välipalautusta ettei jotain olennaista hajoa)

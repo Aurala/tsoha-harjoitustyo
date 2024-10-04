@@ -1,19 +1,21 @@
 {% extends 'base.html' %}
 
 {% block header %}
+
   <h1>{% block title %}Tervetuloa ostoksille!{% endblock %}</h1>
-  {% if g.user %}
-  {% endif %}
+
 {% endblock %}
 
 {% block content %}
+
 <div class="lists">
   <div class="row">
+
     <div class="column">
       <div class="category">Uusimmat kaupat</div>
       {% for shop in newest_shops %}
         <article class="top-picks">
-          <div class="name">{{ shop['name'] }}</div>  
+          <div class="name"><a href="{{ url_for('ostoskeskus.products', shop_id=shop['shop_id']) }}">{{ shop['name'] }}</a></div>  
           <div class="description">{{ shop['description'] }}</div>
         </article>
         {% if not loop.last %}
@@ -21,11 +23,12 @@
         {% endif %}
       {% endfor %}
     </div>
+
     <div class="column">
       <div class="category">Uusimmat tuotteet</div>
       {% for product in newest_products %}
         <article class="top-picks">
-          <div class="name">{{ product['name'] }}</div>  
+          <div class="name"><a href="{{ url_for('ostoskeskus.product', product_id=product['product_id']) }}">{{ product['name'] }}</a></div>
           <div class="description">{{ product['description'] }}</div>
         </article>
         {% if not loop.last %}
@@ -33,11 +36,12 @@
         {% endif %}
       {% endfor %}
     </div>
+
     <div class="column">
       <div class="category">Suosituimmat kaupat</div>
       {% for shop in popular_shops %}
         <article class="top-picks">
-          <div class="name">{{ shop['name'] }}</div>  
+          <div class="name"><a href="{{ url_for('ostoskeskus.products', shop_id=shop['shop_id']) }}">{{ shop['name'] }}</a></div>  
           <div class="description">{{ shop['description'] }}</div>
         </article>
         {% if not loop.last %}
@@ -45,23 +49,32 @@
         {% endif %}
       {% endfor %}
     </div>
+
     <div class="column">
       <div class="category">Ostetuimmat tuotteet</div>
       {% for product in popular_products %}
         <article class="top-picks">
-          <div class="name">{{ shop['name'] }}</div>  
-          <div class="description">{{ shop['description'] }}</div>
+          <div class="name"><a href="{{ url_for('ostoskeskus.product', product_id=product['product_id']) }}">{{ product['name'] }}</a></div>  
+          <div class="description">{{ product['description'] }}</div>
         </article>
         {% if not loop.last %}
           <hr>
         {% endif %}
       {% endfor %}
     </div>
+
   </div>
 </div>
-<form action="{{ url_for('ostoskeskus.products') }}" method="post" class="search-form">
+
+<div class="list_footer">
+  <a href="{{ url_for('ostoskeskus.products') }}">Selaa tuotteita</a>
+  <a href="{{ url_for('ostoskeskus.shops') }}">Selaa kauppoja</a>
+</div>
+
+<form action="{{ url_for('ostoskeskus.products') }}" method="get" class="search-form">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-  <input type="text" name="search" id="search" placeholder="Etsi tuotteita...">
+  <input type="text" name="search" id="search" placeholder="Etsi tuotteita..." required>
   <input type="submit" value="Etsi">
 </form>
+
 {% endblock %}

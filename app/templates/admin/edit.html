@@ -1,0 +1,30 @@
+{% extends 'admin/base.html' %}
+
+{% block content %}
+
+<form method="post" class="admin-form" enctype="multipart/form-data">
+    <input type="hidden" name="product_id" id="product_id" value="{{ product['product_id'] }}">
+    <label for="name">Nimi</label>
+    <input name="name" id="name" required value="{{ product['name'] }}">
+    <label for="desciption">Kuvaus</label>
+    <input name="description" id="description" required value="{{ product['description'] }}">
+    <label for="image">Kuva</label>
+    <input type="file" name="image" id="image">
+    <div><img src="{{ product['image'] }}"></div>
+    <label for="price">Hinta</label>
+    <input name="price" id="price" required value="{{ product['price'] }}">
+    <label for="quantity">Määrä</label>
+    <input name="quantity" id="quantity" required value="{{ product['quantity'] }}">
+    <label for="Myynnissä">Myynnissä</label>
+    <input type="checkbox" name="is_available" id="is_available" {% if product['is_available'] %} checked {% endif %}>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+
+    {% if product | length > 0 %}
+        <input type="submit" value="Muuta tietoja">
+    {% else %}
+        <input type="submit" value="Lisää uusi tuote">
+    {% endif %}
+  
+    </form>
+
+{% endblock %}

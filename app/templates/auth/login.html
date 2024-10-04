@@ -1,10 +1,13 @@
 {% extends 'auth/base.html' %}
 
 {% block header %}
+
   <h1>{% block title %}Kirjaudu sisään{% endblock %}</h1>
+  
 {% endblock %}
 
 {% block content %}
+
   <form method="post" class="auth-form">
     <label for="email">Sähköpostiosoite</label>
     <input name="email" id="email" required>
@@ -13,4 +16,5 @@
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
     <input type="submit" value="Kirjaudu sisään">
   </form>
+
 {% endblock %}
