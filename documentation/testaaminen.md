@@ -13,7 +13,7 @@ inv populatedb
 Tai sitten manuaalisesti:
 
 ```
-TODO: OHJEET TÄHÄN
+flask --app app populate-db
 ```
 
 
