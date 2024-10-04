@@ -31,6 +31,22 @@ def shops():
     return render_template("ostoskeskus/shops.html")
 
 
+@bp.route("/product/<int:product_id>", methods=["GET"])
+def product(product_id):
+    db = get_db()
+
+    product = db.execute(
+        "SELECT product_id, (SELECT name FROM Shops WHERE Shops.shop_id=Products.shop_id) AS shop_name, name, description, image, price, quantity FROM Products WHERE product_id=? AND is_available=1;",
+        (product_id,)
+    ).fetchone()
+
+    if product is None:
+        flash("Tuotetta ei löytynyt.")
+        return redirect(url_for("products"))
+
+    return render_template("ostoskeskus/products.html", products=[product], current_page=1, total_pages=1)
+
+
 @bp.route("/products", methods=["GET"])
 def products():
 
@@ -42,15 +58,15 @@ def products():
         page = 1
     search_term = request.args.get("search", "", type=str)
     try:
-        shop = request.args.get("shop", None, type=int)
+        shop_id = request.args.get("shop_id", None, type=int)
     except ValueError:
-        shop = None
+        shop_id = None
 
     db = get_db()
 
     total_products = db.execute("SELECT COUNT(product_id) FROM Products WHERE (name LIKE ? OR description LIKE ?) AND (Products.shop_id = ? OR ? IS NULL) AND is_available=1;",
                                 ("%" + search_term + "%", "%" +
-                                 search_term + "%", shop, shop)
+                                 search_term + "%", shop_id, shop_id)
                                 ).fetchone()
 
     if total_products[0] == 0:
@@ -62,8 +78,8 @@ def products():
                    products_per_page - 1) // products_per_page
 
     filtered_products = db.execute("SELECT product_id, (SELECT name FROM Shops WHERE Shops.shop_id=Products.shop_id) AS shop_name, name, description, image, price, quantity FROM Products WHERE (name LIKE ? OR description LIKE ?) AND (Products.shop_id = ? OR ? IS NULL) AND is_available=1 ORDER BY product_id DESC LIMIT ? OFFSET ?;",
-                                   ("%" + search_term + "%", "%" + search_term + "%", shop,
-                                    shop, products_per_page, (page-1)*products_per_page)
+                                   ("%" + search_term + "%", "%" + search_term + "%", shop_id,
+                                    shop_id, products_per_page, (page-1)*products_per_page)
                                    ).fetchall()
 
     return render_template("ostoskeskus/products.html", products=filtered_products, current_page=page, total_pages=total_pages)
