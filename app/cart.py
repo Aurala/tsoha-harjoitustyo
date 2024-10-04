@@ -1,3 +1,4 @@
+import datetime
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, url_for, session
 )
@@ -47,14 +48,16 @@ def order():
 
     products = get_cart()
 
+    # TODO: Manage quantities
+
     db = get_db()
 
-    order_id = db.execute("INSERT INTO Orders (user_id) VALUES (?);",
-                            (g.user["user_id"],)).lastrowid
+    order_id = db.execute("INSERT INTO Orders (user_id, ordered) VALUES (?, ?);",
+                            (g.user["user_id"], datetime.datetime.now())).lastrowid
 
     for product in products:
-        db.execute("INSERT INTO OrderedProducts (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?);",
-                   (order_id, product["product_id"], session["cart"]["_" + str(product["product_id"])], product["price"]))
+        db.execute("INSERT INTO OrderedProducts (order_id, product_id, quantity, price, shipped) VALUES (?, ?, ?, ?, ?);",
+                   (order_id, product["product_id"], session["cart"]["_" + str(product["product_id"])], product["price"], False))
 
     db.commit()
 
@@ -109,10 +112,10 @@ def remove(product_id):
         current_amount -= 1
         if current_amount > 0:
             session["cart"]["_" + str(product_id)] = current_amount
-            flash(f"Tuotteen '{product["name"]}' määrää vähennetty.")
+            flash(f"Tuotteen {product['name']} määrää vähennetty.")
         else:
             session["cart"].pop("_" + str(product_id), None)
-            flash(f"Tuote '{product['name']}' poistettu ostoskorista.")
+            flash(f"Tuote {product['name']} poistettu ostoskorista.")
     else:
         flash(f"Tuotetta {product_id} ei ole ostoskorissa.")
 
