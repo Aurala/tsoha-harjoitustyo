@@ -54,8 +54,8 @@
       <div class="category">Ostetuimmat tuotteet</div>
       {% for product in popular_products %}
         <article class="top-picks">
-          <div class="name">{{ shop['name'] }}</div>  
-          <div class="description">{{ shop['description'] }}</div>
+          <div class="name">{{ product['name'] }}</div>  
+          <div class="description">{{ product['description'] }}</div>
         </article>
         {% if not loop.last %}
           <hr>

@@ -16,10 +16,12 @@ def index():
     newest_products = db.execute(
         "SELECT product_id, (SELECT name FROM Shops WHERE Shops.shop_id=Products.shop_id) AS shop_name, name, description, price, quantity FROM Products WHERE is_available=1 ORDER BY product_id DESC LIMIT 3;"
     ).fetchall()
-
-    # TODO: Get TOP x shops and products
-    popular_shops = []
-    popular_products = []
+    popular_products = db.execute(
+        "SELECT P.product_id, P.name, P.description, SUM(OP.quantity) AS total FROM OrderedProducts OP INNER JOIN products P ON OP.product_id = P.product_id GROUP BY OP.product_id, P.name ORDER BY total DESC LIMIT 3;"
+    ).fetchall()
+    popular_shops = db.execute(
+        "SELECT S.shop_id, S.name, S.description, SUM(OP.quantity) AS total FROM Shops S INNER JOIN Products P ON S.shop_id = P.shop_id INNER JOIN OrderedProducts OP ON P.product_id = OP.product_id GROUP BY S.shop_id, S.name ORDER BY total  DESC LIMIT 3;"
+    ).fetchall()
 
     return render_template("ostoskeskus/index.html", newest_shops=newest_shops, newest_products=newest_products, popular_shops=popular_shops, popular_products=popular_products)
 
