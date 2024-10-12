@@ -1,51 +1,54 @@
-DROP TABLE IF EXISTS Users;
-DROP TABLE IF EXISTS Shops;
-DROP TABLE IF EXISTS Products;
-DROP TABLE IF EXISTS Orders;
-DROP TABLE IF EXISTS OrderedProducts;
+DROP TABLE IF EXISTS Users CASCADE;
+DROP TABLE IF EXISTS Shops CASCADE;
+DROP TABLE IF EXISTS Products CASCADE;
+DROP TABLE IF EXISTS Orders CASCADE;
+DROP TABLE IF EXISTS OrderedProducts CASCADE;
 
 CREATE TABLE Users (
-    user_id INTEGER PRIMARY KEY, 
-    firstname TEXT,
-    lastname TEXT,
-    password TEXT,
-    email TEXT UNIQUE NOT NULL,
-    streetaddress TEXT,
-    postalcode TEXT,
-    city TEXT,
-    is_admin INTEGER DEFAULT FALSE NOT NULL
+    user_id SERIAL PRIMARY KEY, 
+    firstname VARCHAR(25),
+    lastname VARCHAR(25),
+    password VARCHAR(255),
+    email VARCHAR(25) UNIQUE NOT NULL,
+    streetaddress VARCHAR(25),
+    postalcode VARCHAR(5),
+    city VARCHAR(25),
+    is_admin BOOLEAN DEFAULT FALSE NOT NULL
 );
 
 CREATE TABLE Shops (
-    shop_id INTEGER PRIMARY KEY,
+    shop_id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES Users(user_id),
-    name TEXT UNIQUE NOT NULL,
+    name VARCHAR(32) UNIQUE NOT NULL,
     description TEXT,
-    is_available INTEGER DEFAULT FALSE NOT NULL
+    is_available BOOLEAN DEFAULT FALSE NOT NULL
 );
 
 CREATE TABLE Products (
-    product_id INTEGER PRIMARY KEY,
+    product_id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES Users(user_id),
-    shop_id INTEGER REFERENCES Categories(category_id),
-    name TEXT,
+    shop_id INTEGER REFERENCES Shops(shop_id),
+    name VARCHAR(32),
     description TEXT,
-    image BLOB,
+    image_type VARCHAR(50),
+    image BYTEA,
     price REAL,
     quantity INTEGER,
-    is_available INTEGER DEFAULT TRUE NOT NULL
+    is_available BOOLEAN DEFAULT TRUE NOT NULL
 );
 
 CREATE TABLE Orders (
-    order_id INTEGER PRIMARY KEY,
+    order_id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES Users(user_id),
-    ordered DATETIME DEFAULT CURRENT_TIMESTAMP);
+    ordered TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
 
 CREATE TABLE OrderedProducts (
-    item_id INTEGER PRIMARY KEY,
+    item_id SERIAL PRIMARY KEY,
     order_id INTEGER REFERENCES Orders(order_id),
     product_id INTEGER REFERENCES Products(product_id),
     quantity INTEGER,
     price REAL);
 
 INSERT INTO Users (firstname, lastname, password, email, is_admin) VALUES ('Admin', 'User', '{{supersecret}}', 'admin@kauppakeskus.local', TRUE);
+
+COMMIT;

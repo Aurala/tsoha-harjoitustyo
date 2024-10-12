@@ -10,7 +10,13 @@
     <input name="description" id="description" required value="{{ product['description'] }}">
     <label for="image">Kuva</label>
     <input type="file" name="image" id="image">
-    <div><img src="{{ product['image'] }}"></div>
+    <div>
+        {% if product['image_src'] %}
+            <div class="image"><img src="{{ product['image_src'] }}"></div>
+        {% else %}
+            <div class="image"><img src="https://placehold.co/200x200?text=Kuva+puuttuu"></div>
+        {% endif %}
+    </div>
     <label for="price">Hinta</label>
     <input name="price" id="price" required value="{{ product['price'] }}">
     <label for="quantity">Määrä</label>

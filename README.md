@@ -2,7 +2,7 @@
 
 Tässä repositoriossa on Markus Auralan harjoitustyö kurssille [TKT20019 Tietokannat ja web-ohjelmointi](https://hy-tsoha.github.io/materiaali/).
 
-Dokumentti päivitetty: 5.10.2024
+Dokumentti päivitetty: 12.10.2024
 
 ## Aihe
 
@@ -20,7 +20,9 @@ Toteutettu = perustoiminnallisuus löytyy, mutta parantelutarvetta on. Lista [t�
 
 ## Ajaminen
 
-Ohjelma on kehitetty macOS-ympäristössä (Apple Silicon) ja testattu yliopiston Cubbli Linux -koneissa. Ensimmäisen vertaisarvioinnin perusteella ohjelman ajaminen [Windows Subsystem for Linux](https://learn.microsoft.com/en-us/windows/wsl/):n alla oli haasteellista, joten Windows-käyttäjille vahva suositus testata Cubbli Linux -koneella.
+Ohjelma on kehitetty macOS-ympäristössä (Apple Silicon) ja testattu yliopiston Cubbli Linux -koneissa. Vertaisarvioinnin perusteella ohjelman ajaminen [Windows Subsystem for Linux](https://learn.microsoft.com/en-us/windows/wsl/):n alla oli haasteellista, joten Windows-käyttäjille vahva suositus testata Cubbli Linux -koneella.
+
+Ohjelma käyttää PostgreSQL-tietokantaa. Kehityskoneella on ollut käytössä [Postgres.app](https://postgresapp.com/) v2.7.8 default-asetuksilla.
 
 ### Askel askeleelta
 
@@ -56,13 +58,25 @@ Alustettaessa tietokantaan luodaan käyttäjä 'admin@kauppakeskus.local' (salas
 
 Suositeltavaa: testaamista helpottamaan voidaan tietokantaan luoda testisisältöä. Tästä lisää [täällä](documentation/testaaminen.md).
 
-Ennen Ostoskeskuksen käynnistämistä on tehtävä vielä yksi pieni juttu. Projektin juureen tarvitaan tiedosto `.env`, jonka sisältö on seuraavanlainen:
+Ennen Ostoskeskuksen käynnistämistä on tehtävä vielä kaksi pientä juttua:
+
+1. Projektin juureen tarvitaan tiedosto `.env`, jonka sisältö on seuraavanlainen:
 
 ```
 SECRET_KEY="supersecret"
 ```
 
-Ohjelman käynnistäminen:
+Avaimen sisällön voi määrittää vapaasti.
+
+2. Tietokannan tiedot määritetään tiedostoon `config.py`:
+
+```
+SQLALCHEMY_DATABASE_URI = "postgresql:///markusaurala"
+```
+
+[Kurssiohjeiden](https://hy-tsoha.github.io/materiaali/osa-2/#tietokannan-k%C3%A4ytt%C3%A4minen) mukaisesti vaihda osoitteeseen oma käyttäjätunnuksesi.
+
+Sitten ohjelman voikin käynnistää:
 
 ```
 flask run
@@ -94,7 +108,9 @@ Alustettaessa tietokantaan luodaan käyttäjä 'admin@kauppakeskus.local' (salas
 
 Suositeltavaa: testaamista helpottamaan voidaan tietokantaan luoda testisisältöä. Tästä lisää [täällä](documentation/testaaminen.md).
 
-Ennen Ostoskeskuksen käynnistämistä on tehtävä vielä yksi pieni juttu. Projektin juureen tarvitaan tiedosto `.env`, jonka sisältö on seuraavanlainen:
+Ennen Ostoskeskuksen käynnistämistä on tehtävä vielä kaksi pientä juttua:
+
+1. Projektin juureen tarvitaan tiedosto `.env`, jonka sisältö on seuraavanlainen:
 
 ```
 SECRET_KEY="supersecret"
@@ -102,7 +118,15 @@ SECRET_KEY="supersecret"
 
 Avaimen sisällön voi määrittää vapaasti.
 
-Ohjelman ajaminen:
+2. Tietokannan tiedot määritetään tiedostoon `config.py`:
+
+```
+SQLALCHEMY_DATABASE_URI = "postgresql:///markusaurala"
+```
+
+[Kurssiohjeiden](https://hy-tsoha.github.io/materiaali/osa-2/#tietokannan-k%C3%A4ytt%C3%A4minen) mukaisesti vaihda osoitteeseen oma käyttäjätunnuksesi.
+
+Sitten ohjelman voikin käynnistää:
 
 ```
 inv start
@@ -120,11 +144,12 @@ Lue lisää [testaamisesta](documentation/testaaminen.md).
 - Tietokantakyselyt olisi syytä siirtää johonkin funktioon koodin monistamisen sijaan; samalla virheenkäsittelyn lisääminen
 - `inv format` (`autopep8`) ei tee kaikkia korjauksia; syy tuntematon, tutkittava
 - Kuvien lisääminen ja muokkaaminen ei toimi
+- Syötteiden katkaiseminen tietyn mittaisiksi ennen tallentamista
+- Syötteiden katkaiseminen erilaisissa listauksissa
 
 ## Arvostelijalle tiedoksi
 
-- Ohjelmoinnissa pyritty noudattamaan [Flask-projektin tutoriaalia](https://flask.palletsprojects.com/en/3.0.x/tutorial/) sekä kurssin ["Aineopintojen harjoitustyö: Ohjelmistotekniikka"](https://ohjelmistotekniikka-hy.github.io/) käytäntöjä
+- Ohjelmoinnissa pyritty noudattamaan myös [Flask-projektin tutoriaalia](https://flask.palletsprojects.com/en/3.0.x/tutorial/) sekä kurssin ["Aineopintojen harjoitustyö: Ohjelmistotekniikka"](https://ohjelmistotekniikka-hy.github.io/) käytäntöjä
 - Tekoälyä käytetty sparrauskumppanina, mutta koodia sillä ei ole tuotettu
 - Grafiikka generoitu tekoälyllä, ei copyrightseja
 - Käytän tässä harjoituksessa tietokantaa kuvien tallentamiseen; ei varmasti fiksuin ratkaisu oikeaan käyttöön, mutta kuvittelin tällä taklattavan ongelmia polkujen ja oikeuksien kanssa erilaisissa ympäristöissä
-- Olen hölmöyttäni sivuuttanut ohjeen PostgreSQL:n käytöstä ja käyttänyt SQLiteä, tämän virheen korjaan lopulliseen palautukseen (sovittu ohjaajan kanssa, että en tee ennen välipalautusta ettei jotain olennaista hajoa)

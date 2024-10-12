@@ -1,9 +1,11 @@
+import base64
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
 from werkzeug.exceptions import abort
 from app.auth import login_required
-from app.db import get_db
+from app.db import db
+from sqlalchemy import text
 
 bp = Blueprint("admin", __name__, url_prefix="/admin")
 
@@ -30,13 +32,20 @@ def shop():
             error = "Nimen on oltava vähintään 15 merkkiä."
 
         if error is None:
-            db = get_db()
             try:
-                db.execute(
-                    "UPDATE Shops SET name = ?, description = ?, is_available = 1 WHERE user_id = ?",
-                    (name, description, g.user["user_id"]),
-                )
-                db.commit()
+                with db.engine.begin() as connection:
+                    connection.execute(
+                        text("""
+                        UPDATE Shops
+                        SET name = :name, description = :description, is_available = TRUE
+                        WHERE user_id = :user_id
+                        """),
+                        {
+                            "name": name,
+                            "description": description,
+                            "user_id": g.user["user_id"]
+                        }
+                    )
             except db.IntegrityError:
                 error = f"Kauppa nimeltä {name} on jo olemassa."
             else:
@@ -45,12 +54,16 @@ def shop():
 
         flash(error)
 
-    db = get_db()
-
-    shop = db.execute(
-        "SELECT shop_id, user_id, name, description, is_available FROM shops WHERE user_id = ?",
-        (g.user["user_id"],)
-    ).fetchone()
+    with db.engine.connect() as connection:
+        shop = connection.execute(
+            text("""
+                 SELECT shop_id, user_id, name, description, is_available
+                 FROM Shops WHERE user_id = :user_id
+                 """),
+            {
+                "user_id": g.user["user_id"]
+            }
+        ).fetchone()
 
     return render_template("admin/shop.html", shop=shop)
 
@@ -69,26 +82,61 @@ def products():
     except ValueError:
         page = 1
 
-    db = get_db()
+    with db.engine.connect() as connection:
+        total_products = connection.execute(
+            text("""
+            SELECT COUNT(product_id)
+            FROM Products
+            WHERE user_id = :user_id
+            """),
+            {
+                "user_id": g.user["user_id"]
+            }
+        ).fetchone()
 
-    total_products = db.execute("SELECT COUNT(product_id) FROM Products WHERE user_id = ?;",
-                                (g.user["user_id"],)
-                                ).fetchone()
+        if total_products[0] == 0:
+            flash("Sinulla ei ole tuotteita")
+            render_template("admin/products.html", products=[],
+                            current_page=1, total_pages=1)
 
-    if total_products[0] == 0:
-        flash("Sinulla ei ole tuotteita")
-        render_template("admin/products.html", products=[],
-                        current_page=1, total_pages=1)
+        total_pages = (total_products[0] +
+                       products_per_page - 1) // products_per_page
 
-    total_pages = (total_products[0] +
-                   products_per_page - 1) // products_per_page
+        filtered_products = connection.execute(
+            text("""
+            SELECT P.product_id, S.name AS shop_name, P.name, P.description, P.image_type, P.image, P.price, P.quantity
+            FROM Products P
+            LEFT JOIN Shops S ON P.shop_id = S.shop_id
+            WHERE P.user_id = :user_id
+            ORDER BY P.product_id DESC
+            LIMIT :limit OFFSET :offset
+            """),
+            {
+                "user_id": g.user["user_id"],
+                "limit": products_per_page,
+                "offset": (page-1)*products_per_page
+            }
+        ).mappings().fetchall()
 
-    filtered_products = db.execute("SELECT product_id, (SELECT name FROM Shops WHERE Shops.shop_id=Products.shop_id) AS shop_name, name, description, image, price, quantity FROM Products WHERE user_id = ? ORDER BY product_id DESC LIMIT ? OFFSET ?;",
-                                   (g.user["user_id"], products_per_page,
-                                    (page-1)*products_per_page)
-                                   ).fetchall()
+        product_list = []
+        for product in filtered_products:
+            if product["image"]:
+                image_data = base64.b64encode(product["image"]).decode("utf-8")
+                image_src = f"{product['image_type']},{image_data}"
+            else:
+                image_src = None
 
-    return render_template("admin/products.html", products=filtered_products, total_products=total_products[0], current_page=page, total_pages=total_pages)
+            product_list.append({
+                "product_id": product["product_id"],
+                "name": product["name"],
+                "description": product["description"],
+                "price": product["price"],
+                "quantity": product["quantity"],
+                "shop_name": product["shop_name"],
+                "image_src": image_src
+            })
+
+    return render_template("admin/products.html", products=product_list, total_products=total_products[0], current_page=page, total_pages=total_pages)
 
 
 @bp.route("/add", methods=["GET", "POST"])
@@ -99,26 +147,33 @@ def add():
 
         # TODO: Update image
 
-        db = get_db()
-
         # TODO: Input validation
 
         name = request.form.get("name", None, type=str)
         description = request.form.get("description", None, type=str)
         price = request.form.get("price", 0, type=float)
         quantity = request.form.get("quantity", 0, type=int)
-        if request.form.get("is_available"):
-            is_available = 1
-        else:
-            is_available = 0
+        is_available = True if request.form.get("is_available") else False
 
-        db.execute("INSERT INTO Products (user_id, shop_id, name, description, price, quantity, is_available) VALUES (?, ?, ?, ?, ?, ?, ?);",
-                   (g.user["user_id"], g.user["shop_id"], name,
-                    description, price, quantity, is_available)
-                   )
-        db.commit()
+        with db.engine.begin() as connection:
+            connection.execute(
+                text("""
+                INSERT INTO Products 
+                (user_id, shop_id, name, description, price, quantity, is_available)
+                VALUES (:user_id, :shop_id, :name, :description, :price, :quantity, :is_available)
+                """),
+                {
+                    "user_id": g.user["user_id"],
+                    "shop_id": g.user["shop_id"],
+                    "name": name,
+                    "description": description,
+                    "price": price,
+                    "quantity": quantity,
+                    "is_available": is_available
+                }
+            )
 
-        flash("Tuotteen tiedot päivitetty.")
+        flash("Tuote lisätty.")
         return redirect(url_for("admin.products"))
 
     return render_template("admin/edit.html", product=[])
@@ -132,17 +187,24 @@ def edit():
 
         # TODO: Update image
 
-        db = get_db()
-
         product_id = request.form.get("product_id", None, type=int)
 
         if product_id is None:
             flash("Tuotetta ei ole olemassa.")
             return redirect(url_for("admin.products"))
 
-        filtered_product = db.execute("SELECT product_id, user_id, shop_id, name, description, image, price, quantity, is_available FROM Products WHERE product_id=? AND user_id=?;",
-                                      (product_id, g.user["user_id"],)
-                                      ).fetchone()
+        with db.engine.connect() as connection:
+            filtered_product = connection.execute(
+                text("""
+                SELECT product_id, user_id, shop_id, name, description, image_type, image, price, quantity, is_available
+                FROM Products 
+                WHERE product_id = :product_id AND user_id = :user_id
+                """),
+                {
+                    "product_id": product_id,
+                    "user_id": g.user["user_id"]
+                }
+            ).mappings().fetchone()
 
         if len(filtered_product) == 0:
             flash("Tuotetta ei ole olemassa.")
@@ -157,16 +219,25 @@ def edit():
             "price", filtered_product["price"], type=float)
         quantity = request.form.get(
             "quantity", filtered_product["quantity"], type=int)
-        if request.form.get("is_available"):
-            is_available = 1
-        else:
-            is_available = 0
+        is_available = True if request.form.get("is_available") else False
 
-        db.execute("UPDATE Products SET name=?, description=?, price=?, quantity=?, is_available=? WHERE product_id=? AND user_id=?;",
-                   (name, description, price, quantity,
-                    is_available, product_id, g.user["user_id"],)
-                   )
-        db.commit()
+        with db.engine.begin() as connection:
+            connection.execute(
+                text("""
+                UPDATE Products 
+                SET name = :name, description = :description, price = :price, quantity = :quantity, is_available = :is_available
+                WHERE product_id = :product_id AND user_id = :user_id
+                """),
+                {
+                    "name": name,
+                    "description": description,
+                    "price": price,
+                    "quantity": quantity,
+                    "is_available": is_available,
+                    "product_id": product_id,
+                    "user_id": g.user["user_id"]
+                }
+            )
 
         flash("Tuotteen tiedot päivitetty.")
         return redirect(url_for("admin.products"))
@@ -177,13 +248,36 @@ def edit():
         flash("Tuotetta ei ole olemassa.")
         return redirect(url_for("admin.products"))
 
-    db = get_db()
+    with db.engine.connect() as connection:
+        filtered_product = connection.execute(
+            text("""
+            SELECT product_id, user_id, shop_id, name, description, image_type, image, price, quantity, is_available
+            FROM Products 
+            WHERE product_id = :product_id AND user_id = :user_id
+            """),
+            {
+                "product_id": product_id,
+                "user_id": g.user["user_id"]
+            }
+        ).mappings().fetchone()
 
-    filtered_product = db.execute("SELECT product_id, user_id, shop_id, name, description, image, price, quantity, is_available FROM Products WHERE product_id=? AND user_id=?;",
-                                  (product_id, g.user["user_id"],)
-                                  ).fetchone()
+        if filtered_product["image"]:
+            image_data = base64.b64encode(
+                filtered_product["image"]).decode("utf-8")
+            image_src = f"{filtered_product['image_type']},{image_data}"
+        else:
+            image_src = None
 
-    return render_template("admin/edit.html", product=filtered_product)
+        product_list = {
+            "product_id": filtered_product["product_id"],
+            "name": filtered_product["name"],
+            "description": filtered_product["description"],
+            "price": filtered_product["price"],
+            "quantity": filtered_product["quantity"],
+            "image_src": image_src
+        }
+
+    return render_template("admin/edit.html", product=product_list)
 
 
 @bp.route("/sales", methods=["GET"])

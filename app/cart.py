@@ -1,10 +1,12 @@
+import base64
 import datetime
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, url_for, session
 )
 from werkzeug.exceptions import abort
+from sqlalchemy import text
 from app.auth import login_required
-from app.db import get_db
+from app.db import db
 
 bp = Blueprint("cart", __name__, url_prefix="/cart")
 
@@ -19,15 +21,41 @@ def get_cart():
 
     # TODO: Validate product IDs
 
-    product_ids = [int(key.replace("_", "")) for key in session["cart"].keys()]
-    placeholders = ', '.join('?' * len(product_ids))
+    product_ids = [int(key[1:]) for key in session["cart"].keys()]
 
-    db = get_db()
+    with db.engine.connect() as connection:
+        filtered_products = connection.execute(
+            text("""
+            SELECT product_id, user_id, shop_id, name, description, image_type, image, price, quantity, is_available
+            FROM Products
+            WHERE product_id = ANY(:product_ids)
+            """),
+            {
+                "product_ids": product_ids
+            }
+        ).mappings().fetchall()
 
-    filtered_products = db.execute(f"SELECT product_id, user_id, shop_id, name, description, image, price, quantity, is_available FROM Products WHERE product_id IN ({placeholders});",
-                                   product_ids).fetchall()
+        product_list = []
+        for product in filtered_products:
+            if product["image"]:
+                image_data = base64.b64encode(product["image"]).decode("utf-8")
+                image_src = f"{product['image_type']},{image_data}"
+            else:
+                image_src = None
 
-    return filtered_products
+            product_list.append({
+                "product_id": product["product_id"],
+                "user_id": product["user_id"],
+                "shop_id": product["shop_id"],
+                "name": product["name"],
+                "description": product["description"],
+                "price": product["price"],
+                "quantity": product["quantity"],
+                "image_src": image_src,
+                "is_available": product["is_available"]
+            })
+
+    return product_list
 
 
 @bp.route("/")
@@ -50,20 +78,37 @@ def order():
 
     # TODO: Manage quantities
 
-    db = get_db()
+    with db.engine.begin() as connection:
+        result = connection.execute(
+            text("""
+            INSERT INTO Orders (user_id, ordered)
+            VALUES (:user_id, :ordered)
+            RETURNING order_id
+            """),
+            {
+                "user_id": g.user["user_id"],
+                "ordered": datetime.datetime.now()
+            }
+        ).mappings().fetchone()
+        order_id = result["order_id"]
 
-    order_id = db.execute("INSERT INTO Orders (user_id, ordered) VALUES (?, ?);",
-                            (g.user["user_id"], datetime.datetime.now())).lastrowid
-
-    for product in products:
-        db.execute("INSERT INTO OrderedProducts (order_id, product_id, quantity, price, shipped) VALUES (?, ?, ?, ?, ?);",
-                   (order_id, product["product_id"], session["cart"]["_" + str(product["product_id"])], product["price"], False))
-
-    db.commit()
+        for product in products:
+            connection.execute(
+                text("""
+                INSERT INTO OrderedProducts (order_id, product_id, quantity, price)
+                VALUES (:order_id, :product_id, :quantity, :price)
+                """),
+                {
+                    "order_id": order_id,
+                    "product_id": product["product_id"],
+                    "quantity": session["cart"]["_" + str(product["product_id"])],
+                    "price": product["price"]
+                }
+            )
 
     session["cart"] = {}
     flash("Tilaus onnistui!")
-    
+
     return render_template("cart/receipt.html")
 
 
@@ -74,18 +119,23 @@ def add(product_id):
     if "cart" not in session:
         session["cart"] = {}
 
-    db = get_db()
-    product = db.execute(
-        "SELECT name, quantity FROM Products WHERE product_id=?;",
-        (product_id,)
-    ).fetchone()
+    with db.engine.connect() as connection:
+        product = connection.execute(
+            text("""
+            SELECT name, quantity
+            FROM Products
+            WHERE product_id = :product_id
+            """),
+            {
+                "product_id": product_id
+            }
+        ).mappings().fetchone()
 
     if product is None:
         flash(f"Tuotetta {product_id} ei ole olemassa.")
     elif product["quantity"] < 1:
         flash(f"Tuotetta {product['name']} ei ole saatavilla.")
     else:
-        # Numeric dictionary keys are not allowed, using "_" as a prefix
         session["cart"]["_" +
                         str(product_id)] = session["cart"].get("_" + str(product_id), 0) + 1
         flash(f"Tuote {product['name']} lisätty ostoskoriin.")
@@ -100,11 +150,17 @@ def remove(product_id):
     if "cart" not in session:
         session["cart"] = {}
 
-    db = get_db()
-    product = db.execute(
-        "SELECT name, quantity FROM Products WHERE product_id=?;",
-        (product_id,)
-    ).fetchone()
+    with db.engine.connect() as connection:
+        product = connection.execute(
+            text("""
+            SELECT name, quantity
+            FROM Products
+            WHERE product_id = :product_id
+            """),
+            {
+                "product_id": product_id
+            }
+        ).mappings().fetchone()
 
     current_amount = session["cart"].get("_" + str(product_id), 0)
 
@@ -112,7 +168,8 @@ def remove(product_id):
         current_amount -= 1
         if current_amount > 0:
             session["cart"]["_" + str(product_id)] = current_amount
-            flash(f"Tuotteen {product['name']} määrää vähennetty.")
+            flash(
+                f"Tuotteen {product['name']} määrää vähennetty ostoskorissa.")
         else:
             session["cart"].pop("_" + str(product_id), None)
             flash(f"Tuote {product['name']} poistettu ostoskorista.")

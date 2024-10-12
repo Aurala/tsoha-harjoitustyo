@@ -1,30 +1,15 @@
-import sqlite3
 import re
-
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import text
 import click
 from flask import current_app, g
 from werkzeug.security import generate_password_hash
+from app import db
 
-
-def get_db():
-    if "db" not in g:
-        g.db = sqlite3.connect(
-            current_app.config["DATABASE_FILE"],
-        )
-        g.db.row_factory = sqlite3.Row
-
-    return g.db
-
-
-def close_db(e=None):
-    db = g.pop("db", None)
-
-    if db is not None:
-        db.close()
+db = SQLAlchemy()
 
 
 def run_database_script(script):
-    db = get_db()
     with current_app.open_resource(script) as file:
         script = file.read().decode("utf8")
         placeholders = re.findall(r"{{(.*?)}}", script)
@@ -32,11 +17,13 @@ def run_database_script(script):
             hashed_password = generate_password_hash(placeholder)
             script = script.replace(f"{{{{{placeholder}}}}}", hashed_password)
         try:
-            db.executescript(script)
-            db.commit()
+            with db.engine.connect() as connection:
+                connection.execute(text(script))
+                db.session.commit()
             return True
         except Exception as e:
             print(f"Error executing the script: {e}")
+            db.session.rollback()
             return False
 
 
@@ -64,9 +51,3 @@ def populate_db_command():
         return
 
     click.echo("Database population failed.")
-
-
-def init_app(app):
-    app.teardown_appcontext(close_db)
-    app.cli.add_command(init_db_command)
-    app.cli.add_command(populate_db_command)
