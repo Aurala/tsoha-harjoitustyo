@@ -2,7 +2,10 @@ import base64
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
+from PIL import Image
+from io import BytesIO
 from werkzeug.exceptions import abort
+from werkzeug.utils import secure_filename
 from app.auth import login_required
 from app.db import db
 from sqlalchemy import text
@@ -104,7 +107,7 @@ def products():
 
         filtered_products = connection.execute(
             text("""
-            SELECT P.product_id, S.name AS shop_name, P.name, P.description, P.image_type, P.image, P.price, P.quantity
+            SELECT P.product_id, S.name AS shop_name, P.name, P.description, P.image_type, P.image, P.price, P.quantity, P.is_available
             FROM Products P
             LEFT JOIN Shops S ON P.shop_id = S.shop_id
             WHERE P.user_id = :user_id
@@ -133,7 +136,8 @@ def products():
                 "price": product["price"],
                 "quantity": product["quantity"],
                 "shop_name": product["shop_name"],
-                "image_src": image_src
+                "image_src": image_src,
+                "is_available": product["is_available"]
             })
 
     return render_template("admin/products.html", products=product_list, total_products=total_products[0], current_page=page, total_pages=total_pages)
@@ -145,8 +149,6 @@ def add():
 
     if request.method == "POST":
 
-        # TODO: Update image
-
         # TODO: Input validation
 
         name = request.form.get("name", None, type=str)
@@ -155,12 +157,26 @@ def add():
         quantity = request.form.get("quantity", 0, type=int)
         is_available = True if request.form.get("is_available") else False
 
+        image_file = request.files.get('image')
+
+        if image_file and image_file.filename.rsplit(".", 1)[1].lower() in ["jpg", "jpeg", "png"]:
+            filename = secure_filename(image_file.filename)
+            extension = filename.rsplit(".", 1)[1].lower()
+            image_type = f"data:image/{extension};base64"
+
+            image = Image.open(image_file)
+            image = image.resize((200, 200))
+
+            image_io = BytesIO()
+            image.save(image_io, format=extension.upper())
+            image_data = image_io.getvalue()
+
         with db.engine.begin() as connection:
             connection.execute(
                 text("""
                 INSERT INTO Products 
-                (user_id, shop_id, name, description, price, quantity, is_available)
-                VALUES (:user_id, :shop_id, :name, :description, :price, :quantity, :is_available)
+                (user_id, shop_id, name, description, price, quantity, is_available, image_type, image)
+                VALUES (:user_id, :shop_id, :name, :description, :price, :quantity, :is_available, :image_type, :image_data)
                 """),
                 {
                     "user_id": g.user["user_id"],
@@ -169,7 +185,9 @@ def add():
                     "description": description,
                     "price": price,
                     "quantity": quantity,
-                    "is_available": is_available
+                    "is_available": is_available,
+                    "image_type": image_type,
+                    "image_data": image_data
                 }
             )
 
@@ -184,8 +202,6 @@ def add():
 def edit():
 
     if request.method == "POST":
-
-        # TODO: Update image
 
         product_id = request.form.get("product_id", None, type=int)
 
@@ -221,11 +237,28 @@ def edit():
             "quantity", filtered_product["quantity"], type=int)
         is_available = True if request.form.get("is_available") else False
 
+        image_file = request.files.get('image')
+
+        if image_file and image_file.filename.rsplit(".", 1)[1].lower() in ["jpg", "jpeg", "png"]:
+            filename = secure_filename(image_file.filename)
+            extension = filename.rsplit(".", 1)[1].lower()
+            image_type = f"data:image/{extension};base64"
+
+            image = Image.open(image_file)
+            image = image.resize((200, 200))
+
+            image_io = BytesIO()
+            image.save(image_io, format=extension.upper())
+            image_data = image_io.getvalue()
+        else:
+            image_type = filtered_product["image_type"]
+            image_data = filtered_product["image"]
+
         with db.engine.begin() as connection:
             connection.execute(
                 text("""
                 UPDATE Products 
-                SET name = :name, description = :description, price = :price, quantity = :quantity, is_available = :is_available
+                SET name = :name, description = :description, price = :price, quantity = :quantity, is_available = :is_available, image_type = :image_type, image = :image_data
                 WHERE product_id = :product_id AND user_id = :user_id
                 """),
                 {
@@ -235,7 +268,9 @@ def edit():
                     "quantity": quantity,
                     "is_available": is_available,
                     "product_id": product_id,
-                    "user_id": g.user["user_id"]
+                    "user_id": g.user["user_id"],
+                    "image_type": image_type,
+                    "image_data": image_data
                 }
             )
 
@@ -274,7 +309,8 @@ def edit():
             "description": filtered_product["description"],
             "price": filtered_product["price"],
             "quantity": filtered_product["quantity"],
-            "image_src": image_src
+            "image_src": image_src,
+            "is_available": filtered_product["is_available"]
         }
 
     return render_template("admin/edit.html", product=product_list)
