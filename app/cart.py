@@ -1,9 +1,8 @@
 import base64
 import datetime
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, url_for, session
+    Blueprint, flash, g, redirect, render_template, url_for, session
 )
-from werkzeug.exceptions import abort
 from sqlalchemy import text
 from app.auth import login_required
 from app.db import db

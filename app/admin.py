@@ -1,14 +1,13 @@
 import base64
+from io import BytesIO
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, session, url_for
+    Blueprint, flash, g, redirect, render_template, request, url_for
 )
 from PIL import Image
-from io import BytesIO
-from werkzeug.exceptions import abort
 from werkzeug.utils import secure_filename
+from sqlalchemy import text
 from app.auth import login_required
 from app.db import db
-from sqlalchemy import text
 
 bp = Blueprint("admin", __name__, url_prefix="/admin")
 
@@ -155,7 +154,7 @@ def add():
         description = request.form.get("description", None, type=str)
         price = request.form.get("price", 0, type=float)
         quantity = request.form.get("quantity", 0, type=int)
-        is_available = True if request.form.get("is_available") else False
+        is_available = bool(request.form.get("is_available"))
 
         image_file = request.files.get('image')
 
@@ -235,7 +234,7 @@ def edit():
             "price", filtered_product["price"], type=float)
         quantity = request.form.get(
             "quantity", filtered_product["quantity"], type=int)
-        is_available = True if request.form.get("is_available") else False
+        is_available = bool(request.form.get("is_available"))
 
         image_file = request.files.get('image')
 

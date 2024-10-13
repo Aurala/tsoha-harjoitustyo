@@ -1,8 +1,7 @@
 import base64
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, url_for
+    Blueprint, flash, redirect, render_template, request, url_for
 )
-from werkzeug.exceptions import abort
 from sqlalchemy import text
 from app.db import db
 

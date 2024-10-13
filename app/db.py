@@ -2,9 +2,8 @@ import re
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
 import click
-from flask import current_app, g
+from flask import current_app
 from werkzeug.security import generate_password_hash
-from app import db
 
 db = SQLAlchemy()
 
