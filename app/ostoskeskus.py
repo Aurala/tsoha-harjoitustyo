@@ -69,9 +69,9 @@ def shops():
 @bp.route("/product/<int:product_id>", methods=["GET"])
 def product(product_id):
     with db.engine.connect() as connection:
-        product = connection.execute(
+        filtered_product = connection.execute(
             text("""
-            SELECT P.product_id, P.name, P.description, P.image_type, P.image, P.price, P.quantity, S.name AS shop_name
+            SELECT P.product_id, P.name, P.description, P.image_type, P.image, P.price, P.quantity, P.is_available, S.name AS shop_name
             FROM Products P
             LEFT JOIN Shops S ON P.shop_id = S.shop_id
             WHERE P.product_id = :product_id AND P.is_available = TRUE
@@ -81,11 +81,29 @@ def product(product_id):
             }
         ).mappings().fetchone()
 
-    if product is None:
+    if filtered_product is None:
         flash("Tuotetta ei löytynyt.")
         return redirect(url_for("products"))
 
-    return render_template("ostoskeskus/products.html", products=[product], current_page=1, total_pages=1)
+    if filtered_product["image"]:
+        image_data = base64.b64encode(
+            filtered_product["image"]).decode("utf-8")
+        image_src = f"{filtered_product['image_type']},{image_data}"
+    else:
+        image_src = None
+
+    product_list = {
+        "product_id": filtered_product["product_id"],
+        "name": filtered_product["name"],
+        "description": filtered_product["description"],
+        "price": filtered_product["price"],
+        "quantity": filtered_product["quantity"],
+        "shop_name": filtered_product["shop_name"],
+        "image_src": image_src,
+        "is_available": filtered_product["is_available"]
+    }
+
+    return render_template("ostoskeskus/products.html", products=[product_list], current_page=1, total_pages=1)
 
 
 @bp.route("/products", methods=["GET"])
