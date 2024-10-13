@@ -26,9 +26,10 @@ def get_cart():
     with db.engine.connect() as connection:
         filtered_products = connection.execute(
             text("""
-            SELECT product_id, user_id, shop_id, name, description, image_type, image, price, quantity, is_available
-            FROM Products
-            WHERE product_id = ANY(:product_ids)
+            SELECT P.product_id, P.user_id, P.shop_id, P.name, P.description, P.image_type, P.image, P.price, P.quantity, P.is_available, S.name AS shop_name
+            FROM Products P
+            LEFT JOIN Shops S ON P.shop_id = S.shop_id
+            WHERE P.product_id = ANY(:product_ids)
             """),
             {
                 "product_ids": product_ids
@@ -52,7 +53,8 @@ def get_cart():
                 "price": product["price"],
                 "quantity": product["quantity"],
                 "image_src": image_src,
-                "is_available": product["is_available"]
+                "is_available": product["is_available"],
+                "shop_name": product["shop_name"],
             })
 
     return product_list
@@ -70,7 +72,7 @@ def view():
     return render_template("cart/view.html", products=products)
 
 
-@bp.route("/order", methods=["GET"])
+@bp.route("/order", methods=["POST"])
 @login_required
 def order():
 

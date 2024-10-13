@@ -36,14 +36,15 @@
             {% endfor %}
         </div>
 
+        <form action="{{ url_for('cart.order') }}" method="post" class="order-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            <input type="submit" value="Tilaa tuotteet">
+          </form>
+
     {% endif %}
 
     <div class="list_footer">
         <a href="{{ url_for('ostoskeskus.products') }}">Palaa kauppaan</a>
-
-        {% if session["cart"] %}
-            <a href="{{ url_for('cart.order') }}">Tilaa tuotteet</a>
-        {% endif %}
         
     </div>
 

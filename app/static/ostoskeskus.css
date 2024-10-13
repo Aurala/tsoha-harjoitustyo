@@ -104,6 +104,10 @@ header > h1 {
     font-size: 1rem;
     text-align: center;
 }
+.thanks {
+    font-size: 1.5rem;
+    text-align: center;
+}
 .seller {
     font-size: 1rem;
     text-align: center;
@@ -145,7 +149,7 @@ header > h1 {
     margin-bottom: 0px;
     border-radius: 5px;
 }
-.search-form {
+.search-form, .order-form {
     max-width: 500px;
     margin: 0 auto;
     padding: 20px;
