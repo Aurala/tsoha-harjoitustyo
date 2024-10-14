@@ -2,7 +2,7 @@
 
 Tässä repositoriossa on Markus Auralan harjoitustyö kurssille [TKT20019 Tietokannat ja web-ohjelmointi](https://hy-tsoha.github.io/materiaali/).
 
-Dokumentti päivitetty: 12.10.2024
+Dokumentti päivitetty: 14.10.2024
 
 ## Aihe
 
@@ -10,7 +10,7 @@ Harjoitustyössä toteutan Flaskilla yksinkertaisen Ostoskeskus-nimisen verkkoka
 
 - Toteutettu: Käyttäjä voi rekisteröityä verkkokauppaan ja kirjautua sisään/ulos.
 - Toteutettu: Kirjautuneilla käyttäjillä on ylläpitosivu, jonka kautta he voivat aktivoida verkkokaupan sisällä oman kauppansa.
-- Osittain toteutettu (kuvia ei voi lisätä/muuttaa): Kirjautuneet käyttäjät voivat muokata ylläpitosivun kautta oman kauppansa valikoimaa, saatavuustietoja, jne.
+- Toteutettu: Kirjautuneet käyttäjät voivat muokata ylläpitosivun kautta oman kauppansa valikoimaa, saatavuustietoja, jne.
 - Toteutettu: Kaikki käyttäjät voivat selata, etsiä ja katsella tuotteita.
 - Toteutettu: Kirjautuneet käyttäjät voivat lisätä kauppojen tuotteita ostoskoreihinsa ja tarvittaessa poistaa tuotteita niistä.
 - Toteutettu: Kirjautunut käyttäjä voi tilata ostoskorinsa sisältämät tuotteet (maksutapana kuvitteellinen lasku, joka toimitetaan rekisteröinnissä annettuun osoitteeseen).
@@ -143,9 +143,7 @@ Lue lisää [testaamisesta](documentation/testaaminen.md).
 - **Tietokannan vaihtaminen SQLitestä PostgreSQL:ään tehtävä**
 - Tietokantakyselyt olisi syytä siirtää johonkin funktioon koodin monistamisen sijaan; samalla virheenkäsittelyn lisääminen
 - `inv format` (`autopep8`) ei tee kaikkia korjauksia; syy tuntematon, tutkittava
-- Kuvien lisääminen ja muokkaaminen ei toimi
 - Syötteiden katkaiseminen tietyn mittaisiksi ennen tallentamista
-- Syötteiden katkaiseminen erilaisissa listauksissa
 
 ## Arvostelijalle tiedoksi
 

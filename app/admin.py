@@ -148,7 +148,7 @@ def add():
 
     if request.method == "POST":
 
-        # TODO: Input validation
+        error = None
 
         name = request.form.get("name", None, type=str)
         description = request.form.get("description", None, type=str)
@@ -156,9 +156,22 @@ def add():
         quantity = request.form.get("quantity", 0, type=int)
         is_available = bool(request.form.get("is_available"))
 
+        if not name or len(name) < 5 or len(name) > 25:
+            error = "Nimi on pakollinen tieto. 5-25 merkkiä."
+        elif not description or len(description) < 25:
+            error = "Kuvaus on pakollinen tieto. Vähintään 25 merkkiä."
+        elif not price or price < 0.01:
+            error = "Hinta on pakollinen tieto. Vähintään 0.01 euroa. (Huomaa desimaalierottimena piste!)"
+        elif not quantity or quantity < 1:
+            error = "Määrä on pakollinen tieto. Vähintään 1 kpl."
+
         image_file = request.files.get('image')
 
-        if image_file and image_file.filename.rsplit(".", 1)[1].lower() in ["jpg", "jpeg", "png"]:
+        if not image_file:
+            error = "Kuva on pakollinen tieto."
+        elif image_file.filename.rsplit(".", 1)[1].lower() not in ["jpg", "jpeg", "png"]:
+            error = "Kuvan tulee olla JPG- tai PNG-muodossa."
+        else:
             filename = secure_filename(image_file.filename)
             extension = filename.rsplit(".", 1)[1].lower()
             image_type = f"data:image/{extension};base64"
@@ -169,6 +182,10 @@ def add():
             image_io = BytesIO()
             image.save(image_io, format=extension.upper())
             image_data = image_io.getvalue()
+
+        if error is not None:
+            flash(error)
+            return redirect(url_for("admin.add"))
 
         with db.engine.begin() as connection:
             connection.execute(
@@ -225,7 +242,7 @@ def edit():
             flash("Tuotetta ei ole olemassa.")
             return redirect(url_for("admin.products"))
 
-        # TODO: Input validation
+        error = None
 
         name = request.form.get("name", filtered_product["name"], type=str)
         description = request.form.get(
@@ -236,22 +253,38 @@ def edit():
             "quantity", filtered_product["quantity"], type=int)
         is_available = bool(request.form.get("is_available"))
 
+        if len(name) < 5 or len(name) > 25:
+            error = "Nimi on pakollinen tieto. 5-25 merkkiä."
+        elif len(description) < 25:
+            error = "Kuvaus on pakollinen tieto. Vähintään 25 merkkiä."
+        elif price < 0.01:
+            error = "Hinta on pakollinen tieto. Vähintään 0.01 euroa. (Huomaa desimaalierottimena piste!)"
+        elif quantity < 1:
+            error = "Määrä on pakollinen tieto. Vähintään 1 kpl."
+
         image_file = request.files.get('image')
 
-        if image_file and image_file.filename.rsplit(".", 1)[1].lower() in ["jpg", "jpeg", "png"]:
-            filename = secure_filename(image_file.filename)
-            extension = filename.rsplit(".", 1)[1].lower()
-            image_type = f"data:image/{extension};base64"
+        if image_file:
+            if image_file.filename.rsplit(".", 1)[1].lower() not in ["jpg", "jpeg", "png"]:
+                error = "Kuvan tulee olla JPG- tai PNG-muodossa."
+            else:
+                filename = secure_filename(image_file.filename)
+                extension = filename.rsplit(".", 1)[1].lower()
+                image_type = f"data:image/{extension};base64"
 
-            image = Image.open(image_file)
-            image = image.resize((200, 200))
+                image = Image.open(image_file)
+                image = image.resize((200, 200))
 
-            image_io = BytesIO()
-            image.save(image_io, format=extension.upper())
-            image_data = image_io.getvalue()
+                image_io = BytesIO()
+                image.save(image_io, format=extension.upper())
+                image_data = image_io.getvalue()
         else:
             image_type = filtered_product["image_type"]
             image_data = filtered_product["image"]
+
+        if error is not None:
+            flash(error)
+            return redirect(url_for("admin.edit", product_id=product_id))
 
         with db.engine.begin() as connection:
             connection.execute(

@@ -28,7 +28,7 @@ CREATE TABLE Products (
     product_id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES Users(user_id),
     shop_id INTEGER REFERENCES Shops(shop_id),
-    name VARCHAR(32),
+    name VARCHAR(25),
     description TEXT,
     image_type VARCHAR(50),
     image BYTEA,
