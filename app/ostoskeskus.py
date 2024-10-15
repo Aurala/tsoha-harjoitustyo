@@ -63,7 +63,17 @@ def index():
 
 @bp.route("/shops", methods=["GET"])
 def shops():
-    return render_template("ostoskeskus/shops.html")
+    with db.engine.connect() as connection:
+        random_shops = connection.execute(
+            text("""
+            SELECT shop_id, name, description
+            FROM Shops
+            ORDER BY random()
+            LIMIT 4
+            """)
+        ).mappings().fetchall()
+
+    return render_template("ostoskeskus/shops.html", shops=random_shops)
 
 
 @bp.route("/product/<int:product_id>", methods=["GET"])
@@ -106,18 +116,18 @@ def product(product_id):
     return render_template("ostoskeskus/products.html", products=[product_list], current_page=1, total_pages=1)
 
 
-@bp.route("/products", methods=["GET"])
+@bp.route("/products", methods=["GET", "POST"])
 def products():
 
     products_per_page = 8
 
     try:
-        page = request.args.get("page", 1, type=int)
+        page = request.args.get("page") or request.form.get("page", 1, type=int)
     except ValueError:
         page = 1
-    search_term = request.args.get("search", "", type=str)
+    search_term = request.args.get("search") or request.form.get("search", "", type=str)
     try:
-        shop_id = request.args.get("shop_id", None, type=int)
+        shop_id = request.args.get("shop_id") or request.form.get("shop_id", None, type=int)
     except ValueError:
         shop_id = None
 

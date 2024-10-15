@@ -105,21 +105,16 @@ header > h1 {
     font-size: 1rem;
     text-align: center;
 }
-.thanks {
+.thanks, .info {
     font-size: 1.5rem;
     text-align: center;
+    margin-bottom: 20px;
 }
 .seller {
     font-size: 1rem;
     text-align: center;
 }
-.buy {
-    margin-top: 10px;
-    margin-bottom: 10px;
-    font-size: 1.5rem;
-    text-align: center;
-}
-.remove {
+.buy, .remove, .browse {
     margin-top: 10px;
     margin-bottom: 10px;
     font-size: 1.5rem;

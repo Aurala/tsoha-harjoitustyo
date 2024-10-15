@@ -2,6 +2,27 @@
 
 {% block content %}
 
-Coming soon: ostoskeskus/shops.html
+<div class="info">Löytyisikö näistä kaupoista jotain shoppailtavaa?</div>
+
+<div class="grid">
+    {% for shop in shops %}
+        <div class="listing">   
+            <div class="name">{{ shop['name'] }}</div>
+            <div class="description">{{ shop['description'] }}</div>
+            <div class="browse"><a href="{{ url_for('ostoskeskus.products', shop_id=shop['shop_id']) }}">Selaa</a></div>
+        </div>
+    {% endfor %}
+    </div>
+
+    <div class="list_footer">
+        <a href="{{ url_for('ostoskeskus.products') }}">Selaa tuotteita</a>
+        <a href="{{ url_for('ostoskeskus.shops') }}">Selaa kauppoja</a>
+      </div>
+      
+      <form action="{{ url_for('ostoskeskus.products') }}" method="post" class="search-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        <input type="text" name="search" id="search" placeholder="Etsi tuotteita..." required>
+        <input type="submit" value="Etsi">
+      </form>
 
 {% endblock %}
