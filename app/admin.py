@@ -348,7 +348,71 @@ def edit():
     return render_template("admin/edit.html", product=product_list)
 
 
-@bp.route("/sales", methods=["GET"])
+@bp.route("/admin/sales", methods=["GET", "POST"])
 @login_required
 def sales():
-    return render_template("admin/sales.html")
+    orders_per_page = 10
+
+    try:
+        page = request.args.get("page") or request.form.get("page", 1, type=int)
+    except ValueError:
+        page = 1
+
+    user_id = g.user["user_id"]
+
+    with db.engine.connect() as connection:
+        total_orders = connection.execute(
+            text("""
+            SELECT COUNT(DISTINCT O.order_id)
+            FROM Orders O
+            JOIN OrderedProducts OP ON O.order_id = OP.order_id
+            JOIN Products P ON OP.product_id = P.product_id
+            JOIN Shops S ON P.shop_id = S.shop_id
+            WHERE S.user_id = :user_id
+            """),
+            {"user_id": g.user["user_id"]}
+        ).fetchone()[0]
+
+        if total_orders == 0:
+            return render_template("admin/sales.html", orders=[], current_page=1, total_pages=1)
+
+        total_pages = (total_orders + orders_per_page - 1) // orders_per_page
+
+        orders = connection.execute(
+            text("""
+            SELECT O.order_id, O.ordered, P.name, P.description, OP.price AS unit_price, OP.quantity, (OP.price * OP.quantity) AS total_price
+            FROM Orders O
+            JOIN OrderedProducts OP ON O.order_id = OP.order_id
+            JOIN Products P ON OP.product_id = P.product_id
+            JOIN Shops S ON P.shop_id = S.shop_id
+            WHERE S.user_id = :user_id
+            ORDER BY O.ordered DESC
+            LIMIT :limit OFFSET :offset
+            """),
+            {
+                "user_id": user_id,
+                "limit": orders_per_page,
+                "offset": (page-1) * orders_per_page
+            }
+        ).mappings().fetchall()
+
+    order_list = {}
+    for order in orders:
+        if order["order_id"] not in order_list:
+            order_list[order["order_id"]] = {
+                "order_id": order["order_id"],
+                "ordered": order["ordered"],
+                "products": []
+            }
+        order_list[order["order_id"]]["products"].append({
+            "name": order["name"],
+            "description": order["description"],
+            "unit_price": order["unit_price"],
+            "quantity": order["quantity"],
+            "total_price": order["total_price"]
+        })
+
+    return render_template("admin/sales.html", 
+                           orders=order_list.values(), 
+                           current_page=page, 
+                           total_pages=total_pages)

@@ -2,7 +2,7 @@
 
 Tässä repositoriossa on Markus Auralan harjoitustyö kurssille [TKT20019 Tietokannat ja web-ohjelmointi](https://hy-tsoha.github.io/materiaali/).
 
-Dokumentti päivitetty: 14.10.2024
+Dokumentti päivitetty: 15.10.2024
 
 ## Aihe
 
@@ -14,7 +14,7 @@ Harjoitustyössä toteutan Flaskilla yksinkertaisen Ostoskeskus-nimisen verkkoka
 - Toteutettu: Kaikki käyttäjät voivat selata, etsiä ja katsella tuotteita.
 - Toteutettu: Kirjautuneet käyttäjät voivat lisätä kauppojen tuotteita ostoskoreihinsa ja tarvittaessa poistaa tuotteita niistä.
 - Toteutettu: Kirjautunut käyttäjä voi tilata ostoskorinsa sisältämät tuotteet (maksutapana kuvitteellinen lasku, joka toimitetaan rekisteröinnissä annettuun osoitteeseen).
-- Ei toteutettu: Kirjautuneilla käyttäjillä on analytiikkasivu, josta he voivat seurata toteutuneita myyntejä ja varastosaldoja.
+- Toteutettu (paitsi varastosaldot, jotka löytyvät muualta): Kirjautuneilla käyttäjillä on analytiikkasivu, josta he voivat seurata toteutuneita myyntejä ~~ja varastosaldoja~~.
 
 Toteutettu = perustoiminnallisuus löytyy, mutta parantelutarvetta on. Lista [täällä](#tiedossa-olevat-ongelmat--puutteet--rajoitukset).
 
@@ -141,8 +141,8 @@ Lue lisää [testaamisesta](documentation/testaaminen.md).
 ## Tiedossa olevat ongelmat / puutteet / rajoitukset
 
 - **Tietokannan vaihtaminen SQLitestä PostgreSQL:ään tehtävä**
-- Tietokantakyselyt olisi syytä siirtää johonkin funktioon koodin monistamisen sijaan; samalla virheenkäsittelyn lisääminen
-- `inv format` (`autopep8`) ei tee kaikkia korjauksia; syy tuntematon, tutkittava
+- Tietokantakyselyissä ja syötteen validoinnissa on koodia, joka olisi syytä siirtää johonkin funktioon koodin monistamisen sijaan
+- `inv format` (`autopep8`) ei tee kaikkia korjauksia - syy tuntematon, joten tein korjauksia käsin
 - Syötteiden katkaiseminen tietyn mittaisiksi ennen tallentamista
 
 ## Arvostelijalle tiedoksi
