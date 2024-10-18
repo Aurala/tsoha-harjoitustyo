@@ -18,8 +18,6 @@ def get_cart():
     if len(session["cart"]) == 0:
         return []
 
-    # TODO: Validate product IDs
-
     product_ids = [int(key[1:]) for key in session["cart"].keys()]
 
     with db.engine.connect() as connection:
@@ -68,7 +66,8 @@ def index():
 @login_required
 def view():
     products = get_cart()
-    return render_template("cart/view.html", products=products)
+    return render_template("cart/view.html",
+                           products=products)
 
 
 @bp.route("/order", methods=["POST"])
@@ -76,8 +75,6 @@ def view():
 def order():
 
     products = get_cart()
-
-    # TODO: Manage quantities
 
     with db.engine.begin() as connection:
         result = connection.execute(
@@ -94,6 +91,35 @@ def order():
         order_id = result["order_id"]
 
         for product in products:
+            product_id = product["product_id"]
+            requested_quantity = session["cart"]["_" + str(product_id)]
+
+            current_quantity = connection.execute(
+                text("""
+                SELECT quantity
+                FROM Products
+                WHERE product_id = :product_id FOR UPDATE
+                """),
+                {"product_id": product_id}
+            ).scalar()
+
+            if requested_quantity > current_quantity:
+                flash(f"Tuotetta {product['name']} ei ole riittävästi varastossa.")
+                return redirect(url_for("cart.view"))
+
+            new_quantity = current_quantity - requested_quantity
+            connection.execute(
+                text("""
+                UPDATE Products
+                SET quantity = :new_quantity
+                WHERE product_id = :product_id
+                """),
+                {
+                    "new_quantity": new_quantity,
+                    "product_id": product_id
+                }
+            )
+
             connection.execute(
                 text("""
                 INSERT INTO OrderedProducts (order_id, product_id, quantity, price)
@@ -101,8 +127,8 @@ def order():
                 """),
                 {
                     "order_id": order_id,
-                    "product_id": product["product_id"],
-                    "quantity": session["cart"]["_" + str(product["product_id"])],
+                    "product_id": product_id,
+                    "quantity": requested_quantity,
                     "price": product["price"]
                 }
             )
