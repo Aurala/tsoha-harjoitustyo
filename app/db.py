@@ -1,6 +1,7 @@
 import re
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
+from sqlalchemy.exc import SQLAlchemyError
 import click
 from flask import current_app
 from werkzeug.security import generate_password_hash
@@ -20,7 +21,7 @@ def run_database_script(script):
                 connection.execute(text(script))
                 db.session.commit()
             return True
-        except Exception as e:
+        except SQLAlchemyError as e:
             print(f"Error executing the script: {e}")
             db.session.rollback()
             return False

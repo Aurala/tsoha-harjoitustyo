@@ -2,50 +2,47 @@
 
 {% block content %}
 
-    {% if not session["cart"] %}
+{% if not session["cart"] %}
 
-        Ostoskorisi on tyhjä.
+  Ostoskorisi on tyhjä.
     
-    {% else %}
+{% else %}
 
-        <div class="grid">
-            {% for product in products %}
-                <div class="listing">
+  <div class="grid">
+    {% for product in products %}
+      <div class="listing">
+        {% if product['image_src'] %}
+          <div class="image"><img src="{{ product['image_src'] }}"></div>
+        {% else %}
+          <div class="image"><img src="https://placehold.co/200x200?text=Kuva+puuttuu"></div>
+        {% endif %}
+        <div class="name">{{ product['name'] }}</div>
+        <div class="description">{{ product['description'] }}</div>
+        <div class="price">{{ '%.2f' % product['price'] }} &#8364; (sis. ALV)</div>
+        <div class="seller">Myyjä: {{ product['shop_name'] }}</div>
+        {% if g.user %}
+          {% set product_key = "_" ~ product['product_id'] %}
+          <div class="quantity">Kappaletta: {{ session["cart"][product_key] }} kpl</div>
+            {% if product_key in session["cart"] and session["cart"][product_key] > 0 %}
+              <div class="remove"><a href="{{ url_for('cart.remove', product_id=product['product_id']) }}">Vähennä</a></div>
+            {% endif %}
+            <div class="buy"><a href="{{ url_for('cart.add', product_id=product['product_id']) }}">Lisää</a></div>
+        {% else %}
+          <div class="buy"><a href="{{ url_for('auth.login') }}">Kirjaudu</a></div>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
 
-                    {% if product['image_src'] %}
-                        <div class="image"><img src="{{ product['image_src'] }}"></div>
-                    {% else %}
-                        <div class="image"><img src="https://placehold.co/200x200?text=Kuva+puuttuu"></div>
-                    {% endif %}
+  <form action="{{ url_for('cart.order') }}" method="post" class="order-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    <input type="submit" value="Tilaa tuotteet">
+  </form>
 
-                    <div class="name">{{ product['name'] }}</div>
-                    <div class="description">{{ product['description'] }}</div>
-                    <div class="price">{{ '%.2f' % product['price'] }} &#8364; (sis. ALV)</div>
-                    <div class="seller">Myyjä: {{ product['shop_name'] }}</div>
-                    {% if g.user %}
-                        {% set product_key = "_" ~ product['product_id'] %}
-                        <div class="quantity">Kappaletta: {{ session["cart"][product_key] }} kpl</div>
-                        {% if product_key in session["cart"] and session["cart"][product_key] > 0 %}
-                            <div class="remove"><a href="{{ url_for('cart.remove', product_id=product['product_id']) }}">Vähennä</a></div>
-                        {% endif %}
-                            <div class="buy"><a href="{{ url_for('cart.add', product_id=product['product_id']) }}">Lisää</a></div>
-                    {% else %}
-                        <div class="buy"><a href="{{ url_for('auth.login') }}">Kirjaudu</a></div>
-                    {% endif %}
-                </div>
-            {% endfor %}
-        </div>
+{% endif %}
 
-        <form action="{{ url_for('cart.order') }}" method="post" class="order-form">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-            <input type="submit" value="Tilaa tuotteet">
-          </form>
-
-    {% endif %}
-
-    <div class="list_footer">
-        <a href="{{ url_for('ostoskeskus.products') }}">Palaa kauppaan</a>
-        
-    </div>
+  <div class="list_footer">
+    <a href="{{ url_for('ostoskeskus.products') }}">Palaa kauppaan</a>
+  </div>
 
 {% endblock %}

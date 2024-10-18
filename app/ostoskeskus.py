@@ -27,7 +27,7 @@ def index():
                 P.product_id, P.name, P.description, P.price, P.quantity, S.name AS shop_name
             FROM Products P
             LEFT JOIN Shops S ON P.shop_id = S.shop_id
-            WHERE P.is_available = TRUE
+            WHERE P.is_available = TRUE AND p.quantity > 0
             ORDER BY P.product_id DESC
             LIMIT 3
             """)
@@ -58,7 +58,11 @@ def index():
             """)
         ).mappings().fetchall()
 
-    return render_template("ostoskeskus/index.html", newest_shops=newest_shops, newest_products=newest_products, popular_shops=popular_shops, popular_products=popular_products)
+    return render_template("ostoskeskus/index.html",
+                           newest_shops=newest_shops,
+                           newest_products=newest_products,
+                           popular_shops=popular_shops,
+                           popular_products=popular_products)
 
 
 @bp.route("/shops", methods=["GET"])
@@ -73,7 +77,8 @@ def shops():
             """)
         ).mappings().fetchall()
 
-    return render_template("ostoskeskus/shops.html", shops=random_shops)
+    return render_template("ostoskeskus/shops.html",
+                           shops=random_shops)
 
 
 @bp.route("/product/<int:product_id>", methods=["GET"])
@@ -113,7 +118,10 @@ def product(product_id):
         "is_available": filtered_product["is_available"]
     }
 
-    return render_template("ostoskeskus/products.html", products=[product_list], current_page=1, total_pages=1)
+    return render_template("ostoskeskus/products.html",
+                           products=[product_list],
+                           current_page=1,
+                           total_pages=1)
 
 
 @bp.route("/products", methods=["GET", "POST"])
@@ -122,12 +130,15 @@ def products():
     products_per_page = 8
 
     try:
-        page = request.args.get("page") or request.form.get("page", 1, type=int)
+        page = request.args.get(
+            "page") or request.form.get("page", 1, type=int)
     except ValueError:
         page = 1
-    search_term = request.args.get("search") or request.form.get("search", "", type=str)
+    search_term = request.args.get(
+        "search") or request.form.get("search", "", type=str)
     try:
-        shop_id = request.args.get("shop_id") or request.form.get("shop_id", None, type=int)
+        shop_id = request.args.get("shop_id") or request.form.get(
+            "shop_id", None, type=int)
     except ValueError:
         shop_id = None
 
@@ -136,7 +147,7 @@ def products():
             text("""
             SELECT COUNT(product_id)
             FROM Products
-            WHERE (name LIKE :search_term OR description LIKE :search_term) AND (Products.shop_id = :shop_id OR :shop_id IS NULL) AND is_available = TRUE
+            WHERE (name LIKE :search_term OR description LIKE :search_term) AND (shop_id = :shop_id OR :shop_id IS NULL) AND is_available = TRUE AND quantity > 0
             """),
             {
                 "search_term": "%" + search_term + "%",
@@ -159,7 +170,7 @@ def products():
             LEFT JOIN Shops S ON P.shop_id = S.shop_id
             WHERE (P.name LIKE :search_term OR P.description LIKE :search_term)
             AND (P.shop_id = :shop_id OR :shop_id IS NULL)
-            AND P.is_available = TRUE
+            AND P.is_available = TRUE AND P.quantity > 0
             ORDER BY P.product_id DESC
             LIMIT :limit OFFSET :offset
             """),
@@ -172,21 +183,24 @@ def products():
         ).mappings().fetchall()
 
         product_list = []
-        for product in filtered_products:
-            if product["image"]:
-                image_data = base64.b64encode(product["image"]).decode("utf-8")
-                image_src = f"{product['image_type']},{image_data}"
+        for prod in filtered_products:
+            if prod["image"]:
+                image_data = base64.b64encode(prod["image"]).decode("utf-8")
+                image_src = f"{prod['image_type']},{image_data}"
             else:
                 image_src = None
 
             product_list.append({
-                "product_id": product["product_id"],
-                "name": product["name"],
-                "description": product["description"],
-                "price": product["price"],
-                "quantity": product["quantity"],
-                "shop_name": product["shop_name"],
+                "product_id": prod["product_id"],
+                "name": prod["name"],
+                "description": prod["description"],
+                "price": prod["price"],
+                "quantity": prod["quantity"],
+                "shop_name": prod["shop_name"],
                 "image_src": image_src
             })
 
-    return render_template("ostoskeskus/products.html", products=product_list, current_page=page, total_pages=total_pages)
+    return render_template("ostoskeskus/products.html",
+                           products=product_list,
+                           current_page=page,
+                           total_pages=total_pages)

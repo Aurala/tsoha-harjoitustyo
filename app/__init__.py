@@ -1,6 +1,5 @@
 from flask import Flask
 from flask_wtf.csrf import CSRFProtect
-from flask_sqlalchemy import SQLAlchemy
 from . import auth
 from . import admin
 from . import cart

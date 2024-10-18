@@ -30,8 +30,8 @@ def shop():
 
         if not name:
             error = "Nimi on pakollinen tieto."
-        elif len(name) < 15:
-            error = "Nimen on oltava vähintään 15 merkkiä."
+        elif len(name) < 15 or len(name) > 50:
+            error = "Nimen on oltava 15-50 merkkiä."
 
         if error is None:
             try:
@@ -57,7 +57,7 @@ def shop():
         flash(error)
 
     with db.engine.connect() as connection:
-        shop = connection.execute(
+        filtered_shop = connection.execute(
             text("""
                  SELECT shop_id, user_id, name, description, is_available
                  FROM Shops WHERE user_id = :user_id
@@ -67,7 +67,8 @@ def shop():
             }
         ).fetchone()
 
-    return render_template("admin/shop.html", shop=shop)
+    return render_template("admin/shop.html",
+                           shop=filtered_shop)
 
 
 @bp.route("/products", methods=("GET", "POST"))
@@ -139,7 +140,11 @@ def products():
                 "is_available": product["is_available"]
             })
 
-    return render_template("admin/products.html", products=product_list, total_products=total_products[0], current_page=page, total_pages=total_pages)
+    return render_template("admin/products.html",
+                           products=product_list,
+                           total_products=total_products[0],
+                           current_page=page,
+                           total_pages=total_pages)
 
 
 @bp.route("/add", methods=["GET", "POST"])
@@ -161,7 +166,7 @@ def add():
         elif not description or len(description) < 25:
             error = "Kuvaus on pakollinen tieto. Vähintään 25 merkkiä."
         elif not price or price < 0.01:
-            error = "Hinta on pakollinen tieto. Vähintään 0.01 euroa. (Huomaa desimaalierottimena piste!)"
+            error = "Hinta on pakollinen tieto. Vähintään 0.01 euroa. (Käytä pistettä!)"
         elif not quantity or quantity < 1:
             error = "Määrä on pakollinen tieto. Vähintään 1 kpl."
 
@@ -210,7 +215,8 @@ def add():
         flash("Tuote lisätty.")
         return redirect(url_for("admin.products"))
 
-    return render_template("admin/edit.html", product=[])
+    return render_template("admin/edit.html",
+                           product=[])
 
 
 @bp.route("/edit", methods=["GET", "POST"])
@@ -258,7 +264,7 @@ def edit():
         elif len(description) < 25:
             error = "Kuvaus on pakollinen tieto. Vähintään 25 merkkiä."
         elif price < 0.01:
-            error = "Hinta on pakollinen tieto. Vähintään 0.01 euroa. (Huomaa desimaalierottimena piste!)"
+            error = "Hinta on pakollinen tieto. Vähintään 0.01 euroa. (Käytä pistettä!)"
         elif quantity < 1:
             error = "Määrä on pakollinen tieto. Vähintään 1 kpl."
 
@@ -284,7 +290,8 @@ def edit():
 
         if error is not None:
             flash(error)
-            return redirect(url_for("admin.edit", product_id=product_id))
+            return redirect(url_for("admin.edit",
+                                    product_id=product_id))
 
         with db.engine.begin() as connection:
             connection.execute(
@@ -345,7 +352,8 @@ def edit():
             "is_available": filtered_product["is_available"]
         }
 
-    return render_template("admin/edit.html", product=product_list)
+    return render_template("admin/edit.html",
+                           product=product_list)
 
 
 @bp.route("/admin/sales", methods=["GET", "POST"])
@@ -354,7 +362,8 @@ def sales():
     orders_per_page = 10
 
     try:
-        page = request.args.get("page") or request.form.get("page", 1, type=int)
+        page = request.args.get(
+            "page") or request.form.get("page", 1, type=int)
     except ValueError:
         page = 1
 
@@ -374,7 +383,10 @@ def sales():
         ).fetchone()[0]
 
         if total_orders == 0:
-            return render_template("admin/sales.html", orders=[], current_page=1, total_pages=1)
+            return render_template("admin/sales.html",
+                                   orders=[],
+                                   current_page=1,
+                                   total_pages=1)
 
         total_pages = (total_orders + orders_per_page - 1) // orders_per_page
 
@@ -412,7 +424,7 @@ def sales():
             "total_price": order["total_price"]
         })
 
-    return render_template("admin/sales.html", 
-                           orders=order_list.values(), 
-                           current_page=page, 
+    return render_template("admin/sales.html",
+                           orders=order_list.values(),
+                           current_page=page,
                            total_pages=total_pages)
