@@ -19,7 +19,7 @@ CREATE TABLE Users (
 CREATE TABLE Shops (
     shop_id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES Users(user_id),
-    name VARCHAR(32) UNIQUE NOT NULL,
+    name VARCHAR(50) UNIQUE NOT NULL,
     description TEXT,
     is_available BOOLEAN DEFAULT FALSE NOT NULL
 );

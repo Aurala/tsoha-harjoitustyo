@@ -78,11 +78,12 @@ def register():
                     user_id = result["user_id"]
                     connection.execute(
                         text("""
-                        INSERT INTO Shops (user_id, name) VALUES (:user_id, :shop_name)
+                        INSERT INTO Shops (user_id, name, description) VALUES (:user_id, :shop_name, :description)
                         """),
                         {
                             "user_id": user_id,
-                            "shop_name": f"Käyttäjän {email} verkkokauppa"
+                            "shop_name": f"{email}:n kauppa",
+                            "description": ""
                         }
                     )
             except IntegrityError:

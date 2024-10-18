@@ -179,6 +179,10 @@ def add():
         else:
             filename = secure_filename(image_file.filename)
             extension = filename.rsplit(".", 1)[1].lower()
+
+            if extension == "jpg":
+                extension = "jpeg"
+
             image_type = f"data:image/{extension};base64"
 
             image = Image.open(image_file)
@@ -276,6 +280,10 @@ def edit():
             else:
                 filename = secure_filename(image_file.filename)
                 extension = filename.rsplit(".", 1)[1].lower()
+
+                if extension == "jpg":
+                    extension = "jpeg"
+
                 image_type = f"data:image/{extension};base64"
 
                 image = Image.open(image_file)
