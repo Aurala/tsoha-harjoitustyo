@@ -36,7 +36,7 @@ def register():
         postalcode = request.form["postalcode"]
         city = request.form["city"]
 
-        if not request.form["email"]:
+        if not email:
             error = "Sähköpostiosoite on pakollinen tieto."
         elif not firstname or len(firstname) < 2 or len(firstname) > 25:
             error = "Etunimi on pakollinen tieto. 2-25 merkkiä"
@@ -52,7 +52,7 @@ def register():
             error = "Salasana on pakollinen tieto. 8-32 merkkiä."
 
         try:
-            validated_email = validate_email(email, check_deliverability=False)
+            validate_email(email, check_deliverability=False)
         except EmailNotValidError:
             error = "Sähköpostiosoite on virheellinen."
 
@@ -75,7 +75,7 @@ def register():
                             "password": generate_password_hash(password)
                         }
                     ).mappings().fetchone()
-                    user_id = result.fetchone("user_id")
+                    user_id = result["user_id"]
                     connection.execute(
                         text("""
                         INSERT INTO Shops (user_id, name) VALUES (:user_id, :shop_name)
