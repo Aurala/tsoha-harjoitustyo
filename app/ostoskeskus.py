@@ -23,8 +23,7 @@ def index():
 
         newest_products = connection.execute(
             text("""
-            SELECT
-                P.product_id, P.name, P.description, P.price, P.quantity, S.name AS shop_name
+            SELECT P.product_id, P.name, P.description, P.price, P.quantity, S.name AS shop_name
             FROM Products P
             LEFT JOIN Shops S ON P.shop_id = S.shop_id
             WHERE P.is_available = TRUE AND p.quantity > 0

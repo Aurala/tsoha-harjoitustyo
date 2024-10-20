@@ -37,13 +37,13 @@ Lue lisää [testaamisesta](documentation/testaaminen.md).
 
 ## Tiedossa olevat ongelmat / puutteet / rajoitukset
 
-- Monessa paikassa, kuten tietokantakyselyissä ja syötteen validoinnissa, on koodia, joka olisi syytä siirtää johonkin funktioon/apuluokkaan koodin monistamisen sijaan
-- `inv format` (`autopep8`) ei tee kaikkia korjauksia - syy tuntematon, joten tein korjauksia käsin
-- Syötteiden katkaiseminen tietyn mittaisiksi ennen tallentamista
+- Monessa paikassa, kuten tietokantakyselyissä ja syötteen validoinnissa, on koodia, joka olisi syytä siirtää johonkin funktioon/apuluokkaan koodin monistamisen sijaan. Nyt jotkut funktiot ovat paisuneet turhan pitkiksi.
+- `inv format` (`autopep8`) ei tee kaikkia korjauksia - syy tuntematon, joten korjauksia tehty käsin.
+- Syötteiden katkaiseminen tietyn mittaisiksi ennen tallentamista.
 
 ## Arvostelijalle tiedoksi
 
-- Ohjelmoinnissa pyritty noudattamaan myös [Flask-projektin tutoriaalia](https://flask.palletsprojects.com/en/3.0.x/tutorial/) sekä kurssin ["Aineopintojen harjoitustyö: Ohjelmistotekniikka"](https://ohjelmistotekniikka-hy.github.io/) käytäntöjä
-- Tekoälyä käytetty sparrauskumppanina, mutta koodia sillä ei ole tuotettu
-- Grafiikka generoitu tekoälyllä, ei copyrightseja
-- Käytän tässä harjoituksessa tietokantaa kuvien tallentamiseen; ei varmasti fiksuin ratkaisu oikeaan käyttöön, mutta kuvittelin tällä taklattavan ongelmia polkujen ja oikeuksien kanssa erilaisissa ympäristöissä
+- Ohjelmoinnissa pyritty noudattamaan myös [Flask-projektin tutoriaalia](https://flask.palletsprojects.com/en/3.0.x/tutorial/) sekä kurssin ["Aineopintojen harjoitustyö: Ohjelmistotekniikka"](https://ohjelmistotekniikka-hy.github.io/) käytäntöjä.
+- Tekoälyä käytetty sparrauskumppanina, mutta koodia sillä ei ole tuotettu.
+- Grafiikka generoitu tekoälyllä, ei copyrightseja.
+- Käytän tässä harjoituksessa tietokantaa kuvien tallentamiseen; ei varmasti fiksuin ratkaisu oikeaan käyttöön, mutta kuvittelin tällä taklattavan ongelmia polkujen ja oikeuksien kanssa erilaisissa ympäristöissä.

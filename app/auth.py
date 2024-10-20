@@ -177,13 +177,13 @@ def login():
                 WHERE email = :email
                 """),
                 {
-                    "email": email
+                    "email": email.strip()
                 }
             ).mappings().fetchone()
 
         if user is None:
             error = "Väärä sähköpostiosoite."
-        elif not check_password_hash(user["password"], password):
+        elif not check_password_hash(user["password"], password.strip()):
             error = "Väärä salasana."
 
         if error is None:

@@ -32,6 +32,8 @@ def shop():
             error = "Nimi on pakollinen tieto."
         elif len(name) < 15 or len(name) > 50:
             error = "Nimen on oltava 15-50 merkkiä."
+        elif len(description) < 25 or len(description) > 250:
+            error = "Kuvauksen on oltava 25-250 merkkiä."
 
         if error is None:
             try:
@@ -163,8 +165,8 @@ def add():
 
         if not name or len(name) < 5 or len(name) > 25:
             error = "Nimi on pakollinen tieto. 5-25 merkkiä."
-        elif not description or len(description) < 25:
-            error = "Kuvaus on pakollinen tieto. Vähintään 25 merkkiä."
+        elif not description or len(description) < 25 or len(description) > 500:
+            error = "Kuvaus on pakollinen tieto. 25-500 merkkiä."
         elif not price or price < 0.01:
             error = "Hinta on pakollinen tieto. Vähintään 0.01 euroa. (Käytä pistettä!)"
         elif not quantity or quantity < 1:
@@ -265,8 +267,8 @@ def edit():
 
         if len(name) < 5 or len(name) > 25:
             error = "Nimi on pakollinen tieto. 5-25 merkkiä."
-        elif len(description) < 25:
-            error = "Kuvaus on pakollinen tieto. Vähintään 25 merkkiä."
+        elif len(description) < 25 or len(description) > 500:
+            error = "Kuvaus on pakollinen tieto. 25-500 merkkiä."
         elif price < 0.01:
             error = "Hinta on pakollinen tieto. Vähintään 0.01 euroa. (Käytä pistettä!)"
         elif quantity < 1:
@@ -387,7 +389,9 @@ def sales():
             JOIN Shops S ON P.shop_id = S.shop_id
             WHERE S.user_id = :user_id
             """),
-            {"user_id": g.user["user_id"]}
+            {
+                "user_id": g.user["user_id"]
+            }
         ).fetchone()[0]
 
         if total_orders == 0:
