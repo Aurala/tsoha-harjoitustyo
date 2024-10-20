@@ -37,7 +37,6 @@ Lue lisää [testaamisesta](documentation/testaaminen.md).
 
 ## Tiedossa olevat ongelmat / puutteet / rajoitukset
 
-- **Tietokannan vaihtaminen SQLitestä PostgreSQL:ään tehtävä**
 - Monessa paikassa, kuten tietokantakyselyissä ja syötteen validoinnissa, on koodia, joka olisi syytä siirtää johonkin funktioon/apuluokkaan koodin monistamisen sijaan
 - `inv format` (`autopep8`) ei tee kaikkia korjauksia - syy tuntematon, joten tein korjauksia käsin
 - Syötteiden katkaiseminen tietyn mittaisiksi ennen tallentamista
