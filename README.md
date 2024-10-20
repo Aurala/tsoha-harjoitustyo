@@ -28,8 +28,8 @@ Ohjelma käyttää PostgreSQL-tietokantaa. Kehityskoneella on ollut käytössä 
 
 Alla on linkit ohjeisiin ohjelman ajamiseen manuaalisesti tai Poetryn avulla. Ensimmäinen askel on kummassakin vaihtoehdossa sama eli projektin kloonaus omaan ympäristöön.
 
-- [Ajaminen manuaalisesti](documentation/ajaminen-manuaalisesti.md)
-- [Ajaminen Poetryn avulla](documentation/ajaminen-poetryn-avulla.md)
+- [Ajaminen manuaalisesti](documentation/ajaminen_manuaalisesti.md)
+- [Ajaminen Poetryn avulla](documentation/ajaminen_poetryn_avulla.md)
 
 ## Testaaminen
 
