@@ -2,7 +2,7 @@
 
 Tässä repositoriossa on Markus Auralan harjoitustyö kurssille [TKT20019 Tietokannat ja web-ohjelmointi](https://hy-tsoha.github.io/materiaali/).
 
-Dokumentti päivitetty: 15.10.2024
+Dokumentti päivitetty: 20.10.2024
 
 ## Aihe
 
@@ -16,123 +16,20 @@ Harjoitustyössä toteutan Flaskilla yksinkertaisen Ostoskeskus-nimisen verkkoka
 - Toteutettu: Kirjautunut käyttäjä voi tilata ostoskorinsa sisältämät tuotteet (maksutapana kuvitteellinen lasku, joka toimitetaan rekisteröinnissä annettuun osoitteeseen).
 - Toteutettu (paitsi varastosaldot, jotka löytyvät muualta): Kirjautuneilla käyttäjillä on analytiikkasivu, josta he voivat seurata toteutuneita myyntejä ~~ja varastosaldoja~~.
 
-Toteutettu = perustoiminnallisuus löytyy, mutta parantelutarvetta on. Lista [täällä](#tiedossa-olevat-ongelmat--puutteet--rajoitukset).
+Toteutettu = perustoiminnallisuus löytyy, mutta hifisteltävää olisi. Lista [täällä](#tiedossa-olevat-ongelmat--puutteet--rajoitukset).
 
 ## Ajaminen
 
 Ohjelma on kehitetty macOS-ympäristössä (Apple Silicon) ja testattu yliopiston Cubbli Linux -koneissa. Vertaisarvioinnin perusteella ohjelman ajaminen [Windows Subsystem for Linux](https://learn.microsoft.com/en-us/windows/wsl/):n alla oli haasteellista, joten Windows-käyttäjille vahva suositus testata Cubbli Linux -koneella.
 
-Ohjelma käyttää PostgreSQL-tietokantaa. Kehityskoneella on ollut käytössä [Postgres.app](https://postgresapp.com/) v2.7.8 default-asetuksilla.
+Ohjelma käyttää PostgreSQL-tietokantaa. Kehityskoneella on ollut käytössä [Postgres.app](https://postgresapp.com/) v2.7.8 default-asetuksilla. Cubbli Linux -koneilla PostgreSQL tein PostgreSQL-asennuksen [asennusskriptiä](https://hy-tsoha.github.io/materiaali/osa-2/#tietokannan-k%C3%A4ytt%C3%A4minen) käyttäen.
 
 ### Askel askeleelta
 
-Alla ohjeet ohjelman ajamiseen manuaalisesti tai Poetryn avulla. Ensimmäinen askel on kummassakin vaihtoehdossa sama eli projektin kloonaus omaan ympäristöön.
+Alla on linkit ohjeisiin ohjelman ajamiseen manuaalisesti tai Poetryn avulla. Ensimmäinen askel on kummassakin vaihtoehdossa sama eli projektin kloonaus omaan ympäristöön.
 
-#### Manuaalisesti
-
-Siirrytään koodin sisältävään hakemistoon ja luodaan virtuaaliympäristö:
-
-```
-python3 -m venv venv
-```
-
-Aktivoidaan virtuaaliympäristö:
-
-```
-source venv/bin/activate
-```
-
-Asennetaan tarvittavat riippuvuudet:
-
-```
-pip install -r requirements.txt
-```
-
-Alustetaan tietokanta:
-
-```
-flask --app app init-db
-```
-
-Alustettaessa tietokantaan luodaan käyttäjä 'admin@kauppakeskus.local' (salasana: 'supersecret').
-
-Suositeltavaa: testaamista helpottamaan voidaan tietokantaan luoda testisisältöä. Tästä lisää [täällä](documentation/testaaminen.md).
-
-Ennen Ostoskeskuksen käynnistämistä on tehtävä vielä kaksi pientä juttua:
-
-1. Projektin juureen tarvitaan tiedosto `.env`, jonka sisältö on seuraavanlainen:
-
-```
-SECRET_KEY="supersecret"
-```
-
-Avaimen sisällön voi määrittää vapaasti.
-
-2. Tietokannan tiedot määritetään tiedostoon `config.py`:
-
-```
-SQLALCHEMY_DATABASE_URI = "postgresql:///markusaurala"
-```
-
-[Kurssiohjeiden](https://hy-tsoha.github.io/materiaali/osa-2/#tietokannan-k%C3%A4ytt%C3%A4minen) mukaisesti vaihda osoitteeseen oma käyttäjätunnuksesi.
-
-Sitten ohjelman voikin käynnistää:
-
-```
-flask run
-```
-
-Tämän jälkeen siirry web-selaimella osoitteeseen http://127.0.0.1:5000/.
-
-#### Poetryä käyttäen
-
-Siirrytään koodin sisältävään hakemistoon ja ajetaan komento:
-
-```
-poetry install
-```
-
-Ellei Poetryä ole asennettuna jo, asennusohjeet löytyvät [täältä](https://python-poetry.org/docs/#installing-with-the-official-installer).
-
-```
-poetry shell
-```
-
-Tietokannan alustaminen:
-
-```
-inv initdb
-```
-
-Alustettaessa tietokantaan luodaan käyttäjä 'admin@kauppakeskus.local' (salasana: 'supersecret').
-
-Suositeltavaa: testaamista helpottamaan voidaan tietokantaan luoda testisisältöä. Tästä lisää [täällä](documentation/testaaminen.md).
-
-Ennen Ostoskeskuksen käynnistämistä on tehtävä vielä kaksi pientä juttua:
-
-1. Projektin juureen tarvitaan tiedosto `.env`, jonka sisältö on seuraavanlainen:
-
-```
-SECRET_KEY="supersecret"
-```
-
-Avaimen sisällön voi määrittää vapaasti.
-
-2. Tietokannan tiedot määritetään tiedostoon `config.py`:
-
-```
-SQLALCHEMY_DATABASE_URI = "postgresql:///markusaurala"
-```
-
-[Kurssiohjeiden](https://hy-tsoha.github.io/materiaali/osa-2/#tietokannan-k%C3%A4ytt%C3%A4minen) mukaisesti vaihda osoitteeseen oma käyttäjätunnuksesi.
-
-Sitten ohjelman voikin käynnistää:
-
-```
-inv start
-```
-
-Tämän jälkeen siirry web-selaimella osoitteeseen http://127.0.0.1:8080/.
+- [Ajaminen manuaalisesti](documentation/ajaminen-manuaalisesti.md)
+- [Ajaminen Poetryn avulla](documentation/ajaminen-poetryn-avulla.md)
 
 ## Testaaminen
 
@@ -141,7 +38,7 @@ Lue lisää [testaamisesta](documentation/testaaminen.md).
 ## Tiedossa olevat ongelmat / puutteet / rajoitukset
 
 - **Tietokannan vaihtaminen SQLitestä PostgreSQL:ään tehtävä**
-- Tietokantakyselyissä ja syötteen validoinnissa on koodia, joka olisi syytä siirtää johonkin funktioon koodin monistamisen sijaan
+- Monessa paikassa, kuten tietokantakyselyissä ja syötteen validoinnissa, on koodia, joka olisi syytä siirtää johonkin funktioon/apuluokkaan koodin monistamisen sijaan
 - `inv format` (`autopep8`) ei tee kaikkia korjauksia - syy tuntematon, joten tein korjauksia käsin
 - Syötteiden katkaiseminen tietyn mittaisiksi ennen tallentamista
 
