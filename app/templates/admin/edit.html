@@ -5,16 +5,22 @@
 <form method="post" class="admin-form" enctype="multipart/form-data">
     <input type="hidden" name="product_id" id="product_id" value="{{ product['product_id'] }}">
     <label for="name">Nimi</label>
-    <input name="name" id="name" required value="{{ product['name'] }}">
+    <input name="name" id="name" required value="{{ product['name'] }}" placeholder="5-50 merkkiä">
     <label for="desciption">Kuvaus</label>
-    <input name="description" id="description" required value="{{ product['description'] }}">
+    <input name="description" id="description" required value="{{ product['description'] }}" placeholder="Vähintään 25 merkkiä">
     <label for="image">Kuva</label>
-    <input type="file" name="image" id="image">
-    <div><img src="{{ product['image'] }}"></div>
+    <input type="file" name="image" id="image">JPG tai PNG, muutetaan kokoon 200x200 pikseliä
+    <div>
+        {% if product['image_src'] %}
+            <div class="image"><img src="{{ product['image_src'] }}"></div>
+        {% else %}
+            <div class="image"><img src="https://placehold.co/200x200?text=Kuva+puuttuu"></div>
+        {% endif %}
+    </div>
     <label for="price">Hinta</label>
-    <input name="price" id="price" required value="{{ product['price'] }}">
+    <input name="price" id="price" required value="{{ product['price'] }}" placeholder="Esim. 12.34">
     <label for="quantity">Määrä</label>
-    <input name="quantity" id="quantity" required value="{{ product['quantity'] }}">
+    <input name="quantity" id="quantity" required value="{{ product['quantity'] }}" placeholder="Esim. 1">
     <label for="Myynnissä">Myynnissä</label>
     <input type="checkbox" name="is_available" id="is_available" {% if product['is_available'] %} checked {% endif %}>
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>

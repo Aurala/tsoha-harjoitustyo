@@ -1,7 +1,45 @@
 {% extends 'admin/base.html' %}
 
 {% block content %}
+        
+    {% if orders %}
+        <ul>
+        {% for order in orders %}
+            <li>
+                <b>Tilaus ID: {{ order.order_id }}</b>
+                <ul>
+                    {% for product in order.products %}
+                        <li>
+                            <b>{{ product.name }}</b>: {{ product.description | truncate(50)}}<br>
+                            Tilausaika: {{ order.ordered.strftime('%d.%m.%Y %H.%M') }}<br>
+                            Yksikköhinta: {{ '%.2f' % product.unit_price }} &#8364;<br>
+                            Määrä: {{ product.quantity }}<br>
+                            Yhteensä: {{ '%.2f' % product.total_price }} &#8364;
+                        </li>
+                    {% endfor %}
+                </ul>
+            </li>
+        {% endfor %}
+        </ul>
 
-Coming soon: admin/sales.html
+        <div class="list_footer">
+            {% if current_page > 1 %}
+                <a href="{{ url_for('admin.admin_products', user_id=user_id, page=current_page-1) }}">Edellinen sivu</a>
+            {% endif %}
+            {% for page_number in range(1, total_pages + 1) %}
+                {% if page_number == current_page %}
+                    <b>{{ page_number }}</b>
+                {% else %}
+                    <a href="{{ url_for('admin.admin_products', user_id=user_id, page=page_number) }}">{{ page_number }}</a>
+                {% endif %}
+            {% endfor %}
+            {% if current_page < total_pages %}
+                <a href="{{ url_for('admin.admin_products', user_id=user_id, page=current_page+1) }}">Seuraava sivu</a>
+            {% endif %}
+        </div>
+
+    {% else %}
+        <p>Sinulla ei ole vielä tilauksia.</p>
+    {% endif %}
 
 {% endblock %}

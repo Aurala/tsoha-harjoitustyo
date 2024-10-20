@@ -2,51 +2,49 @@
 
 {% block content %}
 
-<div class="grid">
-{% for product in products %}
+  <div class="grid">
+  {% for product in products %}
     <div class="listing">
-
-        {% if product['image'] %}
-            <div class="image"><img src="{{ product['image'] }}"></div>
-        {% else %}
-            <div class="image"><img src="https://placehold.co/200x200?text=Kuva+puuttuu"></div>
+    {% if product['image_src'] %}
+      <div class="image"><img src="{{ product['image_src'] }}"></div>
+      {% else %}
+        <div class="image"><img src="https://placehold.co/200x200?text=Kuva+puuttuu"></div>
+      {% endif %}
+      <div class="name">{{ product['name'] }}</div>
+      <div class="description">{{ product['description'] }}</div>
+      <div class="price">{{ '%.2f' % product['price'] }} &#8364; (sis. ALV)</div>
+      <div class="quantity">Saatavilla: {{ product['quantity'] }} kpl</div>
+      <div class="seller">Myyjä: {{ product['shop_name'] }}</div>
+      {% if g.user %}
+        {% set product_key = "_" ~ product['product_id'] %}
+        {% if product_key in session["cart"] and session["cart"][product_key] > 0 %}
+          <div class="remove"><a href="{{ url_for('cart.remove', product_id=product['product_id']) }}">Poista</a></div>
         {% endif %}
-
-        <div class="name">{{ product['name'] }}</div>
-        <div class="description">{{ product['description'] }}</div>
-        <div class="price">{{ '%.2f' % product['price'] }} &#8364; (sis. ALV)</div>    2    
-        <div class="quantity">Saatavilla: {{ product['quantity'] }} kpl</div>
-        <div class="seller">Myyjä: {{ product['shop_name'] }}</div>
-        {% if g.user %}
-            {% set product_key = "_" ~ product['product_id'] %}
-            {% if product_key in session["cart"] and session["cart"][product_key] > 0 %}
-                <div class="remove"><a href="{{ url_for('cart.remove', product_id=product['product_id']) }}">Poista</a></div>
-            {% endif %}
-                <div class="buy"><a href="{{ url_for('cart.add', product_id=product['product_id']) }}">Osta</a></div>
+          <div class="buy"><a href="{{ url_for('cart.add', product_id=product['product_id']) }}">Osta</a></div>
         {% else %}
-            <div class="buy"><a href="{{ url_for('auth.login') }}">Kirjaudu</a></div>
+          <div class="buy"><a href="{{ url_for('auth.login') }}">Kirjaudu</a></div>
         {% endif %}
     </div>
-{% endfor %}
-</div>
+  {% endfor %}
+  </div>
 
-<div class="list_footer">
-    {% if current_page > 1 %}
-        <a href="{{ url_for('ostoskeskus.products', page=current_page-1) }}">Edellinen sivu</a>
+  <div class="list_footer">
+  {% if current_page > 1 %}
+    <a href="{{ url_for('ostoskeskus.products', page=current_page-1) }}">Edellinen sivu</a>
+  {% endif %}
+  {% for page_number in range(1, total_pages + 1) %}
+    {% if page_number == current_page %}
+      <b>{{ page_number }}</b>
+    {% else %}
+      <a href="{{ url_for('ostoskeskus.products', page=page_number) }}">{{ page_number }}</a>
     {% endif %}
-    {% for page_number in range(1, total_pages + 1) %}
-        {% if page_number == current_page %}
-            <b>{{ page_number }}</b>
-        {% else %}
-            <a href="{{ url_for('ostoskeskus.products', page=page_number) }}">{{ page_number }}</a>
-        {% endif %}
-    {% endfor %}
-    {% if current_page < total_pages %}
-        <a href="{{ url_for('ostoskeskus.products', page=current_page+1) }}">Seuraava sivu</a>
-    {% endif %}
-</div>
+  {% endfor %}
+  {% if current_page < total_pages %}
+    <a href="{{ url_for('ostoskeskus.products', page=current_page+1) }}">Seuraava sivu</a>
+  {% endif %}
+  </div>
 
-<form action="{{ url_for('ostoskeskus.products') }}" method="get" class="search-form">
+  <form action="{{ url_for('ostoskeskus.products') }}" method="post" class="search-form">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
     <input type="text" name="search" id="search" placeholder="Etsi tuotteita..." required>
     <input type="submit" value="Etsi">
